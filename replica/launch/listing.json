@@ -1,0 +1,21 @@
+{
+  "avoid": [
+    "MyMoney",
+    "Ananta Raha",
+    "com.raha.app",
+    "raha.app"
+  ],
+  "app_store": {
+    "name": "IKnowMyMoney Expense Tracker",
+    "subtitle": "Private Offline Budget Tool",
+    "promotional_text": "Track daily spending offline with zero tracking. Manage accounts, set budgets, view charts, and export CSV reports with complete data privacy.",
+    "keywords": "finance,spending,ledger,balance,cash,wallet,savings,receipt,calculator,audit",
+    "whats_new": "Initial release of IKnowMyMoney: Fast offline expense logging, category budgets, multi-account net worth tracking, and instant CSV reports.",
+    "description": "IKnowMyMoney is a fast, completely offline personal finance tracker designed to give you clarity over your money without compromising your privacy.\n\nAll your transactions, accounts, and budgets stay 100% on your device inside local SQLite storage. No account creation required, no third-party servers, and zero ads.\n\nKEY FEATURES:\n\n• FAST TRANSACTION LOGGING\nLog expenses, income, or transfers in seconds with an intuitive keypad, custom notes, and automatic date tracking.\n\n• MULTI-ACCOUNT MANAGEMENT\nTrack Cash, Checking accounts, Credit Cards, and Savings in one place with automatic Net Worth calculations.\n\n• SMART CATEGORY BUDGETS\nSet monthly spending limits for categories and track your progress with clear color-coded indicators.\n\n• VISUAL SPENDING ANALYTICS\nUnderstand your cash flow with interactive category breakdowns, monthly comparisons, and distribution charts.\n\n• LOCAL BACKUP & EXPORT\nExport database snapshots directly to your device storage, or generate clean CSV reports for tax records or spreadsheet analysis.\n\n• PRIVACY GUARANTEE\nYour financial records belong solely to you. IKnowMyMoney never uploads or tracks your data."
+  },
+  "google_play": {
+    "title": "IKnowMyMoney Expense Tracker",
+    "short_description": "Private offline expense tracker. Manage accounts, budgets, and visual reports.",
+    "full_description": "IKnowMyMoney is a fast, completely offline personal finance tracker designed to give you clarity over your money without compromising your privacy.\n\nAll your transactions, accounts, and budgets stay 100% on your device inside local SQLite storage. No account creation required, no third-party servers, and zero ads.\n\nKEY FEATURES:\n\n• FAST TRANSACTION LOGGING\nLog expenses, income, or transfers in seconds with an intuitive keypad, custom notes, and automatic date tracking.\n\n• MULTI-ACCOUNT MANAGEMENT\nTrack Cash, Checking accounts, Credit Cards, and Savings in one place with automatic Net Worth calculations.\n\n• SMART CATEGORY BUDGETS\nSet monthly spending limits for categories and track your progress with clear color-coded indicators.\n\n• VISUAL SPENDING ANALYTICS\nUnderstand your cash flow with interactive category breakdowns, monthly comparisons, and distribution charts.\n\n• LOCAL BACKUP & EXPORT\nExport database snapshots directly to your device storage, or generate clean CSV reports for tax records or spreadsheet analysis.\n\n• PRIVACY GUARANTEE\nYour financial records belong solely to you. IKnowMyMoney never uploads or tracks your data."
+  }
+}

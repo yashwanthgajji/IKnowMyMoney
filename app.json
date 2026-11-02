@@ -1,0 +1,33 @@
+{
+  "expo": {
+    "name": "IKnowMyMoney",
+    "slug": "iknowmymoney",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "scheme": "iknowmymoney",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.iknowmymoney.app"
+    },
+    "android": {
+      "package": "com.iknowmymoney.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#047857",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "plugins": [
+      "expo-router",
+      "expo-sqlite",
+      "expo-sharing"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

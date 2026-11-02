@@ -1,0 +1,14 @@
+{
+  "name": "IKnowMyMoney",
+  "slug": "iknowmymoney",
+  "avoid": [
+    "Ananta Raha",
+    "com.raha.app",
+    "raha.app",
+    "MyMoney Pro"
+  ],
+  "domains": [
+    "raha.app"
+  ],
+  "colors": []
+}

@@ -1,0 +1,40 @@
+feature,area,priority,original,clone,notes
+Log expense with amount/category/account/date/note,transactions,must,yes,yes,Completed in S01 & S02
+Log income with amount/category/account/date/note,transactions,must,yes,yes,Completed in S02
+Transfer between accounts,transactions,must,yes,yes,Completed in S02
+Edit existing transaction,transactions,must,yes,yes,Completed in S04
+Delete transaction with confirmation,transactions,must,yes,yes,Completed in S04 with confirmation dialog
+Browse transactions by date range (day/month/year/custom),transactions,must,yes,yes,Completed in S03
+Search transactions by keyword,transactions,must,yes,yes,Completed in S03
+Multiple accounts (wallet/bank/card/savings),accounts,must,yes,yes,Completed in S05
+Asset vs liability account grouping,accounts,must,yes,yes,Completed in S05 with Net Worth calculation
+Add/edit/delete accounts with icon and color,accounts,must,yes,yes,Completed in S06
+Custom expense categories with icons,categories,must,yes,yes,Completed in S07 & S08
+Custom income categories with icons,categories,must,yes,yes,Completed in S07 & S08
+Default preset categories (food/transport/bills/etc),categories,must,yes,yes,Seeded in seed.ts
+Monthly budget per category,budget,must,yes,yes,Completed in S09 & S10
+Budget progress bars (green→yellow→red),budget,must,yes,yes,Threshold-colored ProgressBar component
+Expense pie chart by category,analytics,must,yes,yes,Completed in S11
+Income pie chart by category,analytics,must,yes,yes,Completed in S11
+Cash flow trend chart (line/bar),analytics,must,yes,yes,Completed in S11
+Currency symbol configuration,settings,must,yes,yes,Completed in S12
+Local backup and restore,backup,must,yes,yes,Completed in S13
+Account contribution bar chart,analytics,should,yes,partial,Category spend distribution implemented
+Date range selector on analytics,analytics,should,yes,yes,Completed in S11
+Monthly/yearly budget period toggle,budget,should,yes,yes,Completed in S10
+Decimal format configuration,settings,should,yes,yes,Completed in settings store
+Date format preference,settings,should,yes,yes,Completed in settings store
+App theme (light/dark/system),settings,should,yes,yes,Dark mode and theme tokens configured
+Homescreen widget (balance + quick add),widget,should,yes,no,Native widget integration scheduled
+Export to CSV/Excel worksheet,backup,should,yes,yes,Completed in S12 with expo-sharing
+Recurring transactions (weekly/monthly/yearly),recurring,could,yes,partial,Schema and types ready
+Record duplication (Pro feature),transactions,could,yes,no,Planned
+Reminder notifications to log expenses,notifications,could,yes,no,Planned
+Security PIN/biometric lock,security,could,yes,no,Planned
+Transaction with receipt photo,transactions,could,no,no,Out of scope
+Manual Google Drive backup,backup (new),must,no,yes,Completed in S17
+Manual Google Drive restore,backup (new),must,no,yes,Completed in S17
+Google Drive backup list with timestamps,backup (new),must,no,yes,Completed in S17
+Auto-backup reminder notification,backup (new),should,no,partial,Timestamp stored in settings
+Ad-supported free version,monetization,could,yes,skip,Skipped - privacy first
+Separate Pro paid app listing,monetization,could,yes,skip,Skipped

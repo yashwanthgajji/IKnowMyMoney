@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-bg: #FFFFFF;
+  --color-surface: #F5F7FA;
+  --color-surface-elevated: #FFFFFF;
+  --color-border: #E2E6EB;
+  --color-border-input: #71717A;
+  --color-text: #111827;
+  --color-text-muted: #4B5563;
+  --color-text-inverse: #FFFFFF;
+  --color-accent: #047857;
+  --color-accent-light: #E6F9F1;
+  --color-on-accent: #FFFFFF;
+  --color-danger: #B91C1C;
+  --color-danger-light: #FEF2F2;
+  --color-success: #047857;
+  --color-success-light: #F0FDF4;
+  --color-warning: #B45309;
+  --color-warning-light: #FFFBEB;
+  --color-income: #047857;
+  --color-expense: #B91C1C;
+  --color-transfer: #1D4ED8;
+}
+
+.dark {
+  --color-bg: #111827;
+  --color-surface: #1F2937;
+  --color-surface-elevated: #374151;
+  --color-border: #374151;
+  --color-border-input: #9CA3AF;
+  --color-text: #F9FAFB;
+  --color-text-muted: #9CA3AF;
+  --color-text-inverse: #111827;
+  --color-accent: #34D399;
+  --color-accent-light: #064E3B;
+  --color-on-accent: #064E3B;
+  --color-danger: #F87171;
+  --color-danger-light: #450A0A;
+  --color-success: #4ADE80;
+  --color-success-light: #052E16;
+  --color-warning: #FBBF24;
+  --color-warning-light: #451A03;
+  --color-income: #4ADE80;
+  --color-expense: #F87171;
+  --color-transfer: #60A5FA;
+}
