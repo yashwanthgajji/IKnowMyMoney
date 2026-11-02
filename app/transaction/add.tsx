@@ -16,6 +16,9 @@ import { NumericKeypad } from '../../src/components/ui/NumericKeypad';
 import { CategoryRepository } from '../../src/repositories/category.repository';
 import { AccountRepository } from '../../src/repositories/account.repository';
 import { TransactionRepository } from '../../src/repositories/transaction.repository';
+import { TagRepository } from '../../src/repositories/tag.repository';
+import { TagPicker } from '../../src/components/ui/TagPicker';
+import { DateTimePickerField } from '../../src/components/ui/DateTimePickerField';
 import { useSettingsStore } from '../../src/stores/settings.store';
 import { Category, AccountWithBalance, TransactionType } from '../../src/types';
 import { parseAmountToCents } from '../../src/utils/money';
@@ -31,8 +34,9 @@ export default function AddTransactionScreen() {
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [selectedAccountId, setSelectedAccountId] = useState<number | null>(null);
   const [selectedToAccountId, setSelectedToAccountId] = useState<number | null>(null);
+  const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
   const [note, setNote] = useState<string>('');
-  const [date] = useState<number>(Date.now());
+  const [date, setDate] = useState<number>(Date.now());
   const [showKeypad, setShowKeypad] = useState<boolean>(true);
 
   useEffect(() => {
@@ -106,7 +110,7 @@ export default function AddTransactionScreen() {
     }
 
     try {
-      await TransactionRepository.create({
+      const newTxnId = await TransactionRepository.create({
         amount: amountInCents,
         type,
         category_id: type === 'transfer' ? null : selectedCategoryId,
@@ -116,6 +120,10 @@ export default function AddTransactionScreen() {
         note: note.trim(),
         recurring_id: null,
       });
+
+      if (selectedTagIds.length > 0) {
+        await TagRepository.setTransactionTags(newTxnId, selectedTagIds);
+      }
 
       router.back();
     } catch (e) {
@@ -244,7 +252,10 @@ export default function AddTransactionScreen() {
           </View>
         )}
 
-        {/* Optional Note Field */}
+        {/* Date and Time Selector */}
+        <DateTimePickerField date={date} onChangeDate={setDate} />
+
+        {/* Optional Note Field (Multi-line) */}
         <View className="px-4 mt-4">
           <Text className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
             Note / Description
@@ -254,9 +265,19 @@ export default function AddTransactionScreen() {
             onChangeText={setNote}
             placeholder="Add an optional note (e.g., Grocery store)"
             placeholderTextColor="#9CA3AF"
+            multiline
+            numberOfLines={3}
+            style={{ minHeight: 72, textAlignVertical: 'top' }}
+            blurOnSubmit={false}
             className="bg-gray-50 rounded-xl px-4 py-3 border border-gray-200 text-sm text-gray-800"
           />
         </View>
+
+        {/* Tag Picker */}
+        <TagPicker
+          selectedTagIds={selectedTagIds}
+          onTagsChange={setSelectedTagIds}
+        />
 
         {/* Keypad */}
         {showKeypad && (

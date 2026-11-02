@@ -74,7 +74,7 @@ export default function RootLayout() {
           name="account/[id]"
           options={{
             presentation: 'card',
-            title: 'Edit Account',
+            title: 'Account Details',
           }}
         />
         <Stack.Screen
@@ -95,6 +95,20 @@ export default function RootLayout() {
           options={{
             presentation: 'modal',
             title: 'Add Budget',
+          }}
+        />
+        <Stack.Screen
+          name="tag/add"
+          options={{
+            presentation: 'modal',
+            title: 'Tag',
+          }}
+        />
+        <Stack.Screen
+          name="settings"
+          options={{
+            presentation: 'card',
+            title: 'Settings',
           }}
         />
         <Stack.Screen

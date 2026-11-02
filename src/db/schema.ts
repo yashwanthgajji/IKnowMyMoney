@@ -112,3 +112,26 @@ CREATE TABLE IF NOT EXISTS drive_backups (
 );
 CREATE INDEX IF NOT EXISTS idx_drive_backups_date ON drive_backups (created_at DESC);
 `;
+
+export const CREATE_TAGS_TABLE = `
+CREATE TABLE IF NOT EXISTS tags (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    name          TEXT    NOT NULL UNIQUE,
+    color         TEXT    NOT NULL DEFAULT '#3B82F6',
+    budget_amount INTEGER DEFAULT NULL,
+    created_at    INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_tag_name ON tags (name);
+`;
+
+export const CREATE_TRANSACTION_TAGS_TABLE = `
+CREATE TABLE IF NOT EXISTS transaction_tags (
+    transaction_id INTEGER NOT NULL,
+    tag_id         INTEGER NOT NULL,
+    PRIMARY KEY (transaction_id, tag_id),
+    FOREIGN KEY (transaction_id) REFERENCES transactions(id) ON DELETE CASCADE,
+    FOREIGN KEY (tag_id)         REFERENCES tags(id)         ON DELETE CASCADE
+);
+CREATE INDEX IF NOT EXISTS idx_tt_transaction ON transaction_tags (transaction_id);
+CREATE INDEX IF NOT EXISTS idx_tt_tag         ON transaction_tags (tag_id);
+`;

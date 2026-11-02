@@ -9,12 +9,12 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useFocusEffect } from 'expo-router';
-import { Plus, Trash2, Target, AlertTriangle } from 'lucide-react-native';
+import { Plus, Trash2, Target, AlertTriangle, ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { BudgetRepository } from '../../src/repositories/budget.repository';
 import { useSettingsStore } from '../../src/stores/settings.store';
 import { BudgetWithDetails } from '../../src/types';
 import { formatCurrency } from '../../src/utils/money';
-import { getMonthBounds, formatMonthYear } from '../../src/utils/dates';
+import { getMonthBounds, formatMonthYear, subMonths, addMonths } from '../../src/utils/dates';
 import { ProgressBar } from '../../src/components/ui/ProgressBar';
 import { DynamicIcon } from '../../src/components/ui/DynamicIcon';
 import { EmptyState } from '../../src/components/ui/EmptyState';
@@ -24,8 +24,16 @@ export default function BudgetScreen() {
   const currencySymbol = useSettingsStore((s) => s.currencySymbol);
 
   const [budgets, setBudgets] = useState<BudgetWithDetails[]>([]);
-  const [currentDate] = useState<Date>(new Date());
+  const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const [refreshing, setRefreshing] = useState(false);
+
+  const handlePrevMonth = () => {
+    setCurrentDate((prev) => subMonths(prev, 1));
+  };
+
+  const handleNextMonth = () => {
+    setCurrentDate((prev) => addMonths(prev, 1));
+  };
 
   const loadBudgets = useCallback(async () => {
     try {
@@ -77,6 +85,27 @@ export default function BudgetScreen() {
 
   return (
     <SafeAreaView edges={['left', 'right']} className="flex-1 bg-gray-50">
+      {/* Month Selector Bar */}
+      <View className="flex-row items-center justify-between px-5 py-3 bg-white border-b border-gray-100">
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={handlePrevMonth}
+          className="p-1.5 rounded-full bg-gray-50 active:bg-gray-100"
+        >
+          <ChevronLeft size={20} color="#374151" />
+        </TouchableOpacity>
+        <Text className="text-base font-bold text-gray-900">
+          {formatMonthYear(currentDate)}
+        </Text>
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={handleNextMonth}
+          className="p-1.5 rounded-full bg-gray-50 active:bg-gray-100"
+        >
+          <ChevronRight size={20} color="#374151" />
+        </TouchableOpacity>
+      </View>
+
       <ScrollView
         className="flex-1"
         contentContainerStyle={{ paddingBottom: 100 }}

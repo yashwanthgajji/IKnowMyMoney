@@ -15,6 +15,7 @@ import { TransactionWithDetails } from '../../src/types';
 import { TransactionListItem } from '../../src/components/ui/TransactionListItem';
 import { EmptyState } from '../../src/components/ui/EmptyState';
 import { formatCurrency } from '../../src/utils/money';
+import { groupTransactionsByDate } from '../../src/utils/dates';
 
 export default function TransactionsScreen() {
   const router = useRouter();
@@ -131,14 +132,33 @@ export default function TransactionsScreen() {
             subtitle="Try adjusting your search terms or filter."
           />
         ) : (
-          <View className="bg-white">
-            {transactions.map((txn) => (
-              <TransactionListItem
-                key={txn.id}
-                transaction={txn}
-                currencySymbol={currencySymbol}
-                onPress={() => router.push(`/transaction/${txn.id}`)}
-              />
+          <View>
+            {groupTransactionsByDate(transactions).map((group) => (
+              <View key={group.dateKey} className="mb-2">
+                {/* Section Date Header */}
+                <View className="flex-row justify-between items-center px-4 py-2 bg-gray-100 border-b border-t border-gray-200">
+                  <Text className="text-xs font-bold text-gray-700">
+                    {group.heading}
+                  </Text>
+                  {group.totalExpense > 0 && (
+                    <Text className="text-xs font-semibold text-gray-500">
+                      Spent: {formatCurrency(group.totalExpense, currencySymbol)}
+                    </Text>
+                  )}
+                </View>
+
+                {/* Items in this date group */}
+                <View className="bg-white">
+                  {group.items.map((txn: TransactionWithDetails) => (
+                    <TransactionListItem
+                      key={txn.id}
+                      transaction={txn}
+                      currencySymbol={currencySymbol}
+                      onPress={() => router.push(`/transaction/${txn.id}`)}
+                    />
+                  ))}
+                </View>
+              </View>
             ))}
           </View>
         )}

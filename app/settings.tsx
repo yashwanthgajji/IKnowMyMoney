@@ -20,9 +20,9 @@ import {
 } from 'lucide-react-native';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
-import { useSettingsStore } from '../../src/stores/settings.store';
-import { TransactionRepository } from '../../src/repositories/transaction.repository';
-import { formatDateTime } from '../../src/utils/dates';
+import { useSettingsStore } from '../src/stores/settings.store';
+import { TransactionRepository } from '../src/repositories/transaction.repository';
+import { formatDateTime } from '../src/utils/dates';
 
 export default function SettingsScreen() {
   const router = useRouter();
@@ -45,13 +45,15 @@ export default function SettingsScreen() {
         return;
       }
 
-      let csv = 'ID,Date,Type,Category,Account,To Account,Amount,Note\n';
+      let csv = 'ID,Date,Type,Category,Account,To Account,Amount,Note,Tags\n';
       transactions.forEach((t) => {
         const formattedAmount = (t.amount / 100).toFixed(2);
         const dateStr = new Date(t.date).toISOString().split('T')[0];
+        const tagNames = (t.tags || []).map((tg) => tg.name).join(' | ');
+        const sanitizedNote = (t.note || '').replace(/"/g, '""').replace(/\n/g, ' | ');
         csv += `${t.id},${dateStr},${t.type},"${t.category_name || ''}","${t.account_name}","${
           t.to_account_name || ''
-        }",${formattedAmount},"${(t.note || '').replace(/"/g, '""')}"\n`;
+        }",${formattedAmount},"${sanitizedNote}","${tagNames.replace(/"/g, '""')}"\n`;
       });
 
       const fileUri = `${FileSystem.documentDirectory}iknowmymoney_transactions_${Date.now()}.csv`;
@@ -74,7 +76,7 @@ export default function SettingsScreen() {
   };
 
   return (
-    <SafeAreaView edges={['left', 'right']} className="flex-1 bg-gray-50">
+    <SafeAreaView edges={['left', 'right', 'bottom']} className="flex-1 bg-gray-50">
       <ScrollView className="flex-1 p-4" contentContainerStyle={{ paddingBottom: 60 }}>
         {/* Currency Setting */}
         <View className="mb-4 bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
@@ -109,7 +111,7 @@ export default function SettingsScreen() {
         {/* Categories Manager navigation */}
         <View className="mb-4 bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
           <TouchableOpacity
-            onPress={() => router.push('/category')}
+            onPress={() => router.push('/category/index' as any)}
             className="flex-row items-center justify-between p-4 active:bg-gray-50"
           >
             <View className="flex-row items-center">
@@ -133,7 +135,7 @@ export default function SettingsScreen() {
 
           {/* Local Backup */}
           <TouchableOpacity
-            onPress={() => router.push('/backup/local')}
+            onPress={() => router.push('/backup/local' as any)}
             className="flex-row items-center justify-between p-4 border-b border-gray-100 active:bg-gray-50"
           >
             <View className="flex-row items-center flex-1 mr-2">
@@ -181,7 +183,7 @@ export default function SettingsScreen() {
             Google Drive backups are stored exclusively in your own private storage.
           </Text>
           <Text className="text-[11px] text-gray-300 font-medium mt-3">
-            IKnowMyMoney • Version 1.0.0
+            IKnowMyMoney • Version 1.1.0
           </Text>
         </View>
       </ScrollView>

@@ -58,6 +58,22 @@ export interface TransactionWithDetails extends Transaction {
   account_name: string;
   account_icon: string;
   to_account_name?: string;
+  tags?: Tag[];
+}
+
+export interface Tag {
+  id: number;
+  name: string;
+  color: string;
+  budget_amount: number | null; // in cents, optional budget
+  created_at: number;
+}
+
+export interface TagWithStats extends Tag {
+  transaction_count: number;
+  total_amount: number; // in cents, sum of expenses
+  last_used_date: number | null;
+  budget_progress?: number; // 0-100+ percentage
 }
 
 export interface Budget {

@@ -17,6 +17,9 @@ import { NumericKeypad } from '../../src/components/ui/NumericKeypad';
 import { CategoryRepository } from '../../src/repositories/category.repository';
 import { AccountRepository } from '../../src/repositories/account.repository';
 import { TransactionRepository } from '../../src/repositories/transaction.repository';
+import { TagRepository } from '../../src/repositories/tag.repository';
+import { TagPicker } from '../../src/components/ui/TagPicker';
+import { DateTimePickerField } from '../../src/components/ui/DateTimePickerField';
 import { useSettingsStore } from '../../src/stores/settings.store';
 import { Category, AccountWithBalance, TransactionType } from '../../src/types';
 import { parseAmountToCents, centsToInputValue } from '../../src/utils/money';
@@ -34,6 +37,7 @@ export default function EditTransactionScreen() {
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   const [selectedAccountId, setSelectedAccountId] = useState<number | null>(null);
   const [selectedToAccountId, setSelectedToAccountId] = useState<number | null>(null);
+  const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
   const [note, setNote] = useState<string>('');
   const [date, setDate] = useState<number>(Date.now());
   const [showKeypad, setShowKeypad] = useState<boolean>(false);
@@ -55,6 +59,7 @@ export default function EditTransactionScreen() {
         setSelectedCategoryId(txn.category_id);
         setSelectedAccountId(txn.account_id);
         setSelectedToAccountId(txn.to_account_id);
+        setSelectedTagIds(txn.tags?.map((t) => t.id) || []);
         setNote(txn.note || '');
         setDate(txn.date);
 
@@ -122,7 +127,8 @@ export default function EditTransactionScreen() {
     }
 
     try {
-      await TransactionRepository.update(parseInt(id, 10), {
+      const txnId = parseInt(id, 10);
+      await TransactionRepository.update(txnId, {
         amount: amountInCents,
         type,
         category_id: type === 'transfer' ? null : selectedCategoryId,
@@ -131,6 +137,8 @@ export default function EditTransactionScreen() {
         date,
         note: note.trim(),
       });
+
+      await TagRepository.setTransactionTags(txnId, selectedTagIds);
 
       router.back();
     } catch (e) {
@@ -281,7 +289,10 @@ export default function EditTransactionScreen() {
           </View>
         )}
 
-        {/* Note input */}
+        {/* Date and Time Selector */}
+        <DateTimePickerField date={date} onChangeDate={setDate} />
+
+        {/* Note input (Multi-line) */}
         <View className="px-4 mt-4">
           <Text className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
             Note / Description
@@ -291,9 +302,19 @@ export default function EditTransactionScreen() {
             onChangeText={setNote}
             placeholder="Add a note"
             placeholderTextColor="#9CA3AF"
+            multiline
+            numberOfLines={3}
+            style={{ minHeight: 72, textAlignVertical: 'top' }}
+            blurOnSubmit={false}
             className="bg-gray-50 rounded-xl px-4 py-3 border border-gray-200 text-sm text-gray-800"
           />
         </View>
+
+        {/* Tag Picker */}
+        <TagPicker
+          selectedTagIds={selectedTagIds}
+          onTagsChange={setSelectedTagIds}
+        />
 
         {/* Action Buttons */}
         <View className="p-4 mt-6 gap-3">

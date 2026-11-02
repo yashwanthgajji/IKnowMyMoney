@@ -5,6 +5,7 @@ import {
   TransactionType,
   CategorySpendSummary,
 } from '../types';
+import { TagRepository } from './tag.repository';
 
 export const TransactionRepository = {
   async getRecent(limit: number = 20): Promise<TransactionWithDetails[]> {
@@ -25,7 +26,14 @@ export const TransactionRepository = {
       ORDER BY t.date DESC, t.created_at DESC
       LIMIT ?;
     `;
-    return await db.getAllAsync<TransactionWithDetails>(query, [limit]);
+    const txns = await db.getAllAsync<TransactionWithDetails>(query, [limit]);
+    if (txns.length === 0) return [];
+
+    const tagMap = await TagRepository.getTagsForTransactions(txns.map((t) => t.id));
+    return txns.map((t) => ({
+      ...t,
+      tags: tagMap.get(t.id) || [],
+    }));
   },
 
   async getByDateRange(
@@ -59,7 +67,14 @@ export const TransactionRepository = {
 
     query += ` ORDER BY t.date DESC, t.created_at DESC;`;
 
-    return await db.getAllAsync<TransactionWithDetails>(query, params);
+    const txns = await db.getAllAsync<TransactionWithDetails>(query, params);
+    if (txns.length === 0) return [];
+
+    const tagMap = await TagRepository.getTagsForTransactions(txns.map((t) => t.id));
+    return txns.map((t) => ({
+      ...t,
+      tags: tagMap.get(t.id) || [],
+    }));
   },
 
   async getById(id: number): Promise<TransactionWithDetails | null> {
@@ -80,7 +95,41 @@ export const TransactionRepository = {
       WHERE t.id = ?;
     `;
     const result = await db.getFirstAsync<TransactionWithDetails>(query, [id]);
-    return result || null;
+    if (!result) return null;
+
+    const tags = await TagRepository.getTagsForTransaction(id);
+    return {
+      ...result,
+      tags,
+    };
+  },
+
+  async getByAccountId(accountId: number): Promise<TransactionWithDetails[]> {
+    const db = await getDatabase();
+    const query = `
+      SELECT 
+        t.*,
+        c.name AS category_name,
+        c.icon AS category_icon,
+        c.color AS category_color,
+        a.name AS account_name,
+        a.icon AS account_icon,
+        toa.name AS to_account_name
+      FROM transactions t
+      LEFT JOIN categories c ON t.category_id = c.id
+      JOIN accounts a ON t.account_id = a.id
+      LEFT JOIN accounts toa ON t.to_account_id = toa.id
+      WHERE t.account_id = ? OR t.to_account_id = ?
+      ORDER BY t.date DESC, t.created_at DESC;
+    `;
+    const txns = await db.getAllAsync<TransactionWithDetails>(query, [accountId, accountId]);
+    if (txns.length === 0) return [];
+
+    const tagMap = await TagRepository.getTagsForTransactions(txns.map((t) => t.id));
+    return txns.map((t) => ({
+      ...t,
+      tags: tagMap.get(t.id) || [],
+    }));
   },
 
   async search(queryText: string): Promise<TransactionWithDetails[]> {
@@ -98,15 +147,30 @@ export const TransactionRepository = {
       LEFT JOIN categories c ON t.category_id = c.id
       JOIN accounts a ON t.account_id = a.id
       LEFT JOIN accounts toa ON t.to_account_id = toa.id
-      WHERE t.note LIKE ? OR c.name LIKE ? OR a.name LIKE ?
+      WHERE t.note LIKE ? 
+         OR c.name LIKE ? 
+         OR a.name LIKE ?
+         OR EXISTS (
+            SELECT 1 FROM transaction_tags tt
+            JOIN tags tg ON tg.id = tt.tag_id
+            WHERE tt.transaction_id = t.id AND tg.name LIKE ?
+         )
       ORDER BY t.date DESC, t.created_at DESC;
     `;
     const searchPattern = `%${queryText}%`;
-    return await db.getAllAsync<TransactionWithDetails>(query, [
+    const txns = await db.getAllAsync<TransactionWithDetails>(query, [
+      searchPattern,
       searchPattern,
       searchPattern,
       searchPattern,
     ]);
+    if (txns.length === 0) return [];
+
+    const tagMap = await TagRepository.getTagsForTransactions(txns.map((t) => t.id));
+    return txns.map((t) => ({
+      ...t,
+      tags: tagMap.get(t.id) || [],
+    }));
   },
 
   async create(data: Omit<Transaction, 'id' | 'created_at' | 'updated_at'>): Promise<number> {

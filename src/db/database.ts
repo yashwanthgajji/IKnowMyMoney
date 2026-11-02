@@ -6,13 +6,26 @@ import {
   CREATE_BUDGETS_TABLE,
   CREATE_RECURRING_TABLE,
   CREATE_DRIVE_BACKUPS_TABLE,
+  CREATE_TAGS_TABLE,
+  CREATE_TRANSACTION_TAGS_TABLE,
 } from './schema';
 import { seedInitialData } from './seed';
 
 export const DB_NAME = 'iknowmymoney.db';
-export const DB_VERSION = 1;
+export const DB_VERSION = 2;
 
 let dbInstance: SQLite.SQLiteDatabase | null = null;
+
+async function migrateDatabase(db: SQLite.SQLiteDatabase): Promise<void> {
+  const result = await db.getFirstAsync<{ user_version: number }>('PRAGMA user_version;');
+  const currentVersion = result?.user_version ?? 0;
+
+  if (currentVersion < 2) {
+    await db.execAsync(CREATE_TAGS_TABLE);
+    await db.execAsync(CREATE_TRANSACTION_TAGS_TABLE);
+    await db.execAsync('PRAGMA user_version = 2;');
+  }
+}
 
 export async function getDatabase(): Promise<SQLite.SQLiteDatabase> {
   if (dbInstance) return dbInstance;
@@ -30,6 +43,11 @@ export async function getDatabase(): Promise<SQLite.SQLiteDatabase> {
   await db.execAsync(CREATE_BUDGETS_TABLE);
   await db.execAsync(CREATE_RECURRING_TABLE);
   await db.execAsync(CREATE_DRIVE_BACKUPS_TABLE);
+  await db.execAsync(CREATE_TAGS_TABLE);
+  await db.execAsync(CREATE_TRANSACTION_TAGS_TABLE);
+
+  // Run version migrations
+  await migrateDatabase(db);
 
   // Seed default accounts and categories if first run
   await seedInitialData(db);

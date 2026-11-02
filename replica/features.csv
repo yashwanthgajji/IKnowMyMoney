@@ -36,5 +36,10 @@ Manual Google Drive backup,backup (new),must,no,yes,Completed in S17
 Manual Google Drive restore,backup (new),must,no,yes,Completed in S17
 Google Drive backup list with timestamps,backup (new),must,no,yes,Completed in S17
 Auto-backup reminder notification,backup (new),should,no,partial,Timestamp stored in settings
+Multiple transaction tags with trip budget tracking,tags (new),must,no,yes,Completed with dedicated Tags tab and ProgressBar
+Account transaction ledger feed,accounts (new),must,no,yes,Completed with live account feed and edit modal
+Historical monthly budget navigation,budget (new),should,no,yes,Completed with month navigation switcher
+Date and time recording with Today/Yesterday presets,transactions (new),must,no,yes,Completed with native Android dialogs
+Multi-line transaction notes with CSV newline escaping,transactions (new),should,no,yes,Completed with multiline input
 Ad-supported free version,monetization,could,yes,skip,Skipped - privacy first
 Separate Pro paid app listing,monetization,could,yes,skip,Skipped

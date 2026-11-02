@@ -1,5 +1,6 @@
 import React from 'react';
-import { Tabs } from 'expo-router';
+import { TouchableOpacity } from 'react-native';
+import { Tabs, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   Home,
@@ -8,10 +9,12 @@ import {
   Target,
   BarChart3,
   Settings,
+  Tags,
 } from 'lucide-react-native';
 
 export default function TabLayout() {
   const insets = useSafeAreaInsets();
+  const router = useRouter();
 
   return (
     <Tabs
@@ -41,6 +44,15 @@ export default function TabLayout() {
         options={{
           title: 'Home',
           headerTitle: 'IKnowMyMoney',
+          headerRight: () => (
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => router.push('/settings' as any)}
+              className="mr-3 p-1.5 rounded-full"
+            >
+              <Settings size={21} color="#4B5563" />
+            </TouchableOpacity>
+          ),
           tabBarIcon: ({ color, size }) => <Home color={color} size={22} />,
         }}
       />
@@ -77,11 +89,11 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="settings"
+        name="tags"
         options={{
-          title: 'Settings',
-          headerTitle: 'Settings',
-          tabBarIcon: ({ color, size }) => <Settings color={color} size={22} />,
+          title: 'Tags',
+          headerTitle: 'Tags & Trips',
+          tabBarIcon: ({ color, size }) => <Tags color={color} size={22} />,
         }}
       />
     </Tabs>

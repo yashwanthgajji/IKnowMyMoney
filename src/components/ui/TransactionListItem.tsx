@@ -3,8 +3,9 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { ArrowLeftRight } from 'lucide-react-native';
 import { TransactionWithDetails } from '../../types';
 import { formatCurrency } from '../../utils/money';
-import { formatShortDate } from '../../utils/dates';
+import { formatDateTimeBadge } from '../../utils/dates';
 import { DynamicIcon } from './DynamicIcon';
+import { TagChip } from './TagChip';
 
 interface TransactionListItemProps {
   transaction: TransactionWithDetails;
@@ -72,10 +73,24 @@ export function TransactionListItem({
             </Text>
             {transaction.note ? (
               <Text className="text-xs text-gray-400 italic flex-1" numberOfLines={1}>
-                • {transaction.note}
+                • {transaction.note.replace(/\n/g, ' ')}
               </Text>
             ) : null}
           </View>
+
+          {/* Tag chips */}
+          {transaction.tags && transaction.tags.length > 0 && (
+            <View className="flex-row flex-wrap items-center mt-1">
+              {transaction.tags.slice(0, 3).map((tag) => (
+                <TagChip key={tag.id} name={tag.name} color={tag.color} size="sm" />
+              ))}
+              {transaction.tags.length > 3 && (
+                <Text className="text-[10px] text-gray-400 font-medium ml-0.5 mb-1">
+                  +{transaction.tags.length - 3}
+                </Text>
+              )}
+            </View>
+          )}
         </View>
       </View>
 
@@ -85,8 +100,8 @@ export function TransactionListItem({
           {amountPrefix}
           {formatCurrency(transaction.amount, currencySymbol)}
         </Text>
-        <Text className="text-xs text-gray-400 mt-0.5">
-          {formatShortDate(transaction.date)}
+        <Text className="text-[11px] text-gray-400 mt-0.5">
+          {formatDateTimeBadge(transaction.date)}
         </Text>
       </View>
     </TouchableOpacity>
