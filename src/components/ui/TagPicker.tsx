@@ -97,17 +97,18 @@ export function TagPicker({
   );
 
   return (
-    <View className="px-4 mt-4">
+    <View className="px-4 mt-3">
       <View className="flex-row items-center justify-between mb-2">
-        <Text className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+        <Text className="text-xs font-black text-[#5B5F5A] dark:text-[#A3A8A0] uppercase tracking-widest">
           Tags ({selectedTagIds.length}/{maxTags})
         </Text>
         <TouchableOpacity
+          activeOpacity={0.7}
           onPress={() => setModalVisible(true)}
-          className="flex-row items-center"
+          className="flex-row items-center bg-white dark:bg-[#1B1E19] border border-[#D5D8CF] dark:border-[#2B3028] px-2.5 py-1 rounded-full"
         >
-          <Plus size={14} color="#047857" />
-          <Text className="text-xs font-semibold text-emerald-700 ml-1">
+          <Plus size={12} color="#0E0F0C" strokeWidth={3} />
+          <Text className="text-[11px] font-black text-[#0E0F0C] dark:text-[#F4F6F2] ml-1 uppercase">
             {selectedTagIds.length === 0 ? 'Add Tags' : 'Manage'}
           </Text>
         </TouchableOpacity>
@@ -127,12 +128,13 @@ export function TagPicker({
 
         {selectedTags.length === 0 && (
           <TouchableOpacity
+            activeOpacity={0.7}
             onPress={() => setModalVisible(true)}
-            className="flex-row items-center px-3 py-1.5 rounded-full border border-dashed border-gray-300 bg-gray-50 mr-2 mb-2"
+            className="flex-row items-center px-3.5 py-2 rounded-full border border-dashed border-[#D5D8CF] dark:border-[#2B3028] bg-white dark:bg-[#1B1E19] mr-2 mb-2"
           >
-            <TagIcon size={12} color="#9CA3AF" />
-            <Text className="text-xs text-gray-400 font-medium ml-1.5">
-              + Tag (e.g. Costco, Trip, Me)
+            <TagIcon size={12} color="#5B5F5A" />
+            <Text className="text-xs text-[#5B5F5A] dark:text-[#A3A8A0] font-bold ml-1.5">
+              + Add Tags (e.g. Costco, Trip, Me)
             </Text>
           </TouchableOpacity>
         )}
@@ -141,7 +143,7 @@ export function TagPicker({
       {/* Quick Suggestions below picker */}
       {quickSuggestions.length > 0 && selectedTagIds.length < maxTags && (
         <View className="flex-row flex-wrap items-center mt-1">
-          <Text className="text-[11px] text-gray-400 mr-2 mb-1.5">Suggested:</Text>
+          <Text className="text-[11px] text-[#868685] font-bold mr-2 mb-1.5">Suggested:</Text>
           {quickSuggestions.map((tag) => (
             <TagChip
               key={tag.id}
@@ -161,39 +163,42 @@ export function TagPicker({
         transparent
         onRequestClose={() => setModalVisible(false)}
       >
-        <View className="flex-1 bg-black/50 justify-end">
-          <View className="bg-white rounded-t-3xl max-h-[80%] pt-4 pb-8 px-5">
+        <View className="flex-1 bg-black/60 justify-end">
+          <View className="bg-white dark:bg-[#1B1E19] rounded-t-3xl max-h-[80%] pt-4 pb-8 px-5 border-t border-[#D5D8CF] dark:border-[#2B3028]">
             {/* Modal Header */}
-            <View className="flex-row items-center justify-between pb-3 border-b border-gray-100">
+            <View className="flex-row items-center justify-between pb-3 border-b border-[#E8EBE6] dark:border-[#2B3028]">
               <View>
-                <Text className="text-lg font-bold text-gray-900">Select Tags</Text>
-                <Text className="text-xs text-gray-500">
+                <Text className="text-lg font-black text-[#0E0F0C] dark:text-[#F4F6F2]">
+                  Select Tags
+                </Text>
+                <Text className="text-xs font-medium text-[#5B5F5A] dark:text-[#A3A8A0]">
                   {selectedTagIds.length} of {maxTags} selected
                 </Text>
               </View>
               <TouchableOpacity
+                activeOpacity={0.7}
                 onPress={() => setModalVisible(false)}
-                className="p-2 rounded-full bg-gray-100"
+                className="p-2 rounded-full bg-[#F4F6F2] dark:bg-[#242921]"
               >
-                <X size={18} color="#6B7280" />
+                <X size={18} color="#0E0F0C" />
               </TouchableOpacity>
             </View>
 
             {/* Search / Quick Create Input */}
-            <View className="flex-row items-center bg-gray-100 rounded-xl px-3 py-2 mt-4 mb-3">
-              <Search size={16} color="#9CA3AF" />
+            <View className="flex-row items-center bg-[#F4F6F2] dark:bg-[#242921] rounded-2xl px-3.5 py-2.5 mt-4 mb-3 border border-[#D5D8CF] dark:border-[#2B3028]">
+              <Search size={16} color="#868685" />
               <TextInput
                 value={searchQuery}
                 onChangeText={setSearchQuery}
                 placeholder="Search or type a new tag..."
-                placeholderTextColor="#9CA3AF"
-                className="flex-1 ml-2 text-sm text-gray-800 py-1"
+                placeholderTextColor="#868685"
+                className="flex-1 ml-2 text-xs font-bold text-[#0E0F0C] dark:text-[#F4F6F2] py-0.5"
                 returnKeyType="done"
                 onSubmitEditing={handleQuickCreateTag}
               />
               {searchQuery.length > 0 && (
                 <TouchableOpacity onPress={() => setSearchQuery('')}>
-                  <X size={16} color="#9CA3AF" />
+                  <X size={16} color="#868685" />
                 </TouchableOpacity>
               )}
             </View>
@@ -203,10 +208,10 @@ export function TagPicker({
               <TouchableOpacity
                 onPress={handleQuickCreateTag}
                 disabled={isCreating}
-                className="flex-row items-center bg-emerald-50 border border-emerald-200 rounded-xl px-3.5 py-2.5 mb-3"
+                className="flex-row items-center bg-[#E8EBE6] dark:bg-[#242921] border border-[#D5D8CF] dark:border-[#2B3028] rounded-xl px-3.5 py-2.5 mb-3"
               >
-                <Plus size={16} color="#047857" />
-                <Text className="text-xs font-semibold text-emerald-800 ml-2">
+                <Plus size={16} color="#0E0F0C" />
+                <Text className="text-xs font-black text-[#0E0F0C] dark:text-[#F4F6F2] ml-2">
                   Create new tag "{searchQuery.trim()}"
                 </Text>
               </TouchableOpacity>
@@ -234,7 +239,7 @@ export function TagPicker({
                       />
                       <Text
                         style={{ color: isSelected ? '#FFFFFF' : tag.color }}
-                        className="text-xs font-semibold mr-1.5"
+                        className="text-xs font-black mr-1.5"
                       >
                         {tag.name}
                       </Text>
@@ -245,8 +250,8 @@ export function TagPicker({
 
                 {filteredTags.length === 0 && searchQuery.trim().length === 0 && (
                   <View className="py-8 items-center w-full">
-                    <Text className="text-sm text-gray-400">No tags created yet</Text>
-                    <Text className="text-xs text-gray-400 mt-1">
+                    <Text className="text-xs font-bold text-[#868685]">No tags created yet</Text>
+                    <Text className="text-xs text-[#868685] mt-1">
                       Type above to create your first tag (e.g. Costco, Trip)
                     </Text>
                   </View>
@@ -256,10 +261,11 @@ export function TagPicker({
 
             {/* Done Button */}
             <TouchableOpacity
+              activeOpacity={0.85}
               onPress={() => setModalVisible(false)}
-              className="bg-emerald-700 rounded-xl py-3.5 items-center mt-4"
+              className="bg-[#9FE870] rounded-full py-3.5 items-center mt-4 border border-[#86D454]"
             >
-              <Text className="text-white font-bold text-sm">
+              <Text className="text-[#0E0F0C] font-black text-xs uppercase tracking-wider">
                 Done ({selectedTagIds.length} Selected)
               </Text>
             </TouchableOpacity>

@@ -10,15 +10,15 @@ export function ProgressBar({ spent, total }: ProgressBarProps) {
   const percentage = total > 0 ? (spent / total) * 100 : 0;
   const clampedWidth = Math.min(Math.max(percentage, 0), 100);
 
-  let barColor = '#047857'; // Green
+  let barColor = '#054D28'; // Wise Forest Green
   if (percentage > 100) {
-    barColor = '#B91C1C'; // Red (Exceeded)
+    barColor = '#A7000D'; // Wise Crimson (Exceeded)
   } else if (percentage > 75) {
-    barColor = '#D97706'; // Amber (Warning)
+    barColor = '#B86700'; // Amber warning
   }
 
   return (
-    <View className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden my-1">
+    <View className="w-full h-2.5 bg-[#E8EBE6] dark:bg-[#242921] rounded-full overflow-hidden my-1">
       <View
         style={{
           width: `${clampedWidth}%`,

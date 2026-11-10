@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from 'expo-router';
-import { ChevronLeft, ChevronRight, PieChart as PieIcon, TrendingUp } from 'lucide-react-native';
+import { ChevronLeft, ChevronRight, TrendingUp } from 'lucide-react-native';
 import { TransactionRepository } from '../../src/repositories/transaction.repository';
 import { useSettingsStore } from '../../src/stores/settings.store';
 import { CategorySpendSummary } from '../../src/types';
@@ -55,37 +55,44 @@ export default function AnalyticsScreen() {
   const handleNextMonth = () => setCurrentDate((d) => addMonths(d, 1));
 
   return (
-    <SafeAreaView edges={['left', 'right']} className="flex-1 bg-gray-50">
-      {/* Month Selector Bar */}
-      <View className="flex-row items-center justify-between px-5 py-3 bg-white border-b border-gray-100">
+    <SafeAreaView edges={['left', 'right']} className="flex-1 bg-[#E8EBE6] dark:bg-[#121411]">
+      {/* Month Selector Bar - Wise Pill Style */}
+      <View className="mx-4 mt-3 bg-white dark:bg-[#1B1E19] rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028] px-3.5 py-2.5 flex-row items-center justify-between">
         <TouchableOpacity
+          activeOpacity={0.7}
           onPress={handlePrevMonth}
-          className="p-1.5 rounded-full bg-gray-50 active:bg-gray-100"
+          className="p-1.5 rounded-full bg-[#F4F6F2] dark:bg-[#242921] active:opacity-70"
         >
-          <ChevronLeft size={20} color="#374151" />
+          <ChevronLeft size={18} color="#0E0F0C" />
         </TouchableOpacity>
-        <Text className="text-base font-bold text-gray-900">
+        <Text className="text-xs font-black uppercase tracking-widest text-[#0E0F0C] dark:text-[#F4F6F2]">
           {formatMonthYear(currentDate)}
         </Text>
         <TouchableOpacity
+          activeOpacity={0.7}
           onPress={handleNextMonth}
-          className="p-1.5 rounded-full bg-gray-50 active:bg-gray-100"
+          className="p-1.5 rounded-full bg-[#F4F6F2] dark:bg-[#242921] active:opacity-70"
         >
-          <ChevronRight size={20} color="#374151" />
+          <ChevronRight size={18} color="#0E0F0C" />
         </TouchableOpacity>
       </View>
 
-      {/* Expense / Income Toggle */}
-      <View className="flex-row p-4 bg-white border-b border-gray-100">
+      {/* Expense / Income Toggle - Wise Segmented Pills */}
+      <View className="mx-4 mt-3 bg-white dark:bg-[#1B1E19] p-1.5 rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028] flex-row gap-1.5">
         <TouchableOpacity
+          activeOpacity={0.8}
           onPress={() => setActiveTab('expense')}
-          className={`flex-1 py-2.5 rounded-xl items-center mr-2 ${
-            activeTab === 'expense' ? 'bg-red-700' : 'bg-gray-100'
+          className={`flex-1 py-2.5 rounded-xl items-center ${
+            activeTab === 'expense'
+              ? 'bg-[#A7000D]'
+              : 'bg-transparent'
           }`}
         >
           <Text
-            className={`text-xs font-bold ${
-              activeTab === 'expense' ? 'text-white' : 'text-gray-600'
+            className={`text-xs ${
+              activeTab === 'expense'
+                ? 'font-black text-white'
+                : 'font-bold text-[#5B5F5A] dark:text-[#A3A8A0]'
             }`}
           >
             Expenses Distribution
@@ -93,14 +100,19 @@ export default function AnalyticsScreen() {
         </TouchableOpacity>
 
         <TouchableOpacity
+          activeOpacity={0.8}
           onPress={() => setActiveTab('income')}
-          className={`flex-1 py-2.5 rounded-xl items-center ml-2 ${
-            activeTab === 'income' ? 'bg-emerald-700' : 'bg-gray-100'
+          className={`flex-1 py-2.5 rounded-xl items-center ${
+            activeTab === 'income'
+              ? 'bg-[#054D28]'
+              : 'bg-transparent'
           }`}
         >
           <Text
-            className={`text-xs font-bold ${
-              activeTab === 'income' ? 'text-white' : 'text-gray-600'
+            className={`text-xs ${
+              activeTab === 'income'
+                ? 'font-black text-white'
+                : 'font-bold text-[#5B5F5A] dark:text-[#A3A8A0]'
             }`}
           >
             Income Distribution
@@ -111,27 +123,35 @@ export default function AnalyticsScreen() {
       <ScrollView
         className="flex-1"
         contentContainerStyle={{ paddingBottom: 60 }}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={['#0E0F0C', '#054D28']}
+          />
+        }
       >
-        {/* Total Overview Card */}
-        <View className="m-4 bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
-          <Text className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">
+        {/* Total Overview Card - Wise Flat Card */}
+        <View className="m-4 bg-white dark:bg-[#1B1E19] rounded-2xl p-5 border border-[#D5D8CF] dark:border-[#2B3028]">
+          <Text className="text-xs font-black text-[#5B5F5A] dark:text-[#A3A8A0] uppercase tracking-widest mb-1">
             Total {activeTab === 'expense' ? 'Expenses' : 'Income'} for Period
           </Text>
           <Text
-            className={`text-3xl font-extrabold ${
-              activeTab === 'expense' ? 'text-red-700' : 'text-emerald-700'
+            className={`text-3xl font-black tracking-tight ${
+              activeTab === 'expense'
+                ? 'text-[#A7000D] dark:text-[#F87171]'
+                : 'text-[#054D28] dark:text-[#4ADE80]'
             }`}
           >
             {formatCurrency(totalAmount, currencySymbol)}
           </Text>
 
           {summaries.length > 0 && (
-            <View className="mt-4 pt-3 border-t border-gray-100 flex-row items-center">
-              <TrendingUp size={16} color="#047857" className="mr-2" />
-              <Text className="text-xs text-gray-600 flex-1 ml-1.5">
+            <View className="mt-4 pt-3 border-t border-[#E8EBE6] dark:border-[#2B3028] flex-row items-center">
+              <TrendingUp size={16} color="#054D28" className="mr-2" />
+              <Text className="text-xs text-[#5B5F5A] dark:text-[#A3A8A0] flex-1 ml-1">
                 Top category:{' '}
-                <Text className="font-bold text-gray-900">
+                <Text className="font-black text-[#0E0F0C] dark:text-[#F4F6F2]">
                   {summaries[0].category_name} ({summaries[0].percentage}%)
                 </Text>
               </Text>
@@ -141,11 +161,11 @@ export default function AnalyticsScreen() {
 
         {/* Visual Proportional Segmented Bar */}
         {summaries.length > 0 && (
-          <View className="mx-4 mb-4 bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
-            <Text className="text-xs font-bold text-gray-700 uppercase tracking-wider mb-2.5">
+          <View className="mx-4 mb-4 bg-white dark:bg-[#1B1E19] p-4 rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028]">
+            <Text className="text-xs font-black text-[#0E0F0C] dark:text-[#F4F6F2] uppercase tracking-wider mb-2.5">
               Spending Breakdown
             </Text>
-            <View className="w-full h-4 rounded-full overflow-hidden flex-row bg-gray-100">
+            <View className="w-full h-3.5 rounded-full overflow-hidden flex-row bg-[#E8EBE6] dark:bg-[#242921]">
               {summaries.map((cat) => (
                 <View
                   key={cat.category_id}
@@ -162,7 +182,9 @@ export default function AnalyticsScreen() {
 
         {/* Category List Breakdown */}
         <View className="px-4">
-          <Text className="text-sm font-bold text-gray-800 mb-2">Category Breakdown</Text>
+          <Text className="text-xs font-black uppercase tracking-widest text-[#0E0F0C] dark:text-[#F4F6F2] mb-2 px-1">
+            Category Breakdown
+          </Text>
 
           {summaries.length === 0 ? (
             <EmptyState
@@ -173,35 +195,40 @@ export default function AnalyticsScreen() {
               )} to view your visual breakdown.`}
             />
           ) : (
-            <View className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
+            <View className="bg-white dark:bg-[#1B1E19] rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028] overflow-hidden">
               {summaries.map((cat) => (
                 <View
                   key={cat.category_id}
-                  className="p-3.5 border-b border-gray-100"
+                  className="p-3.5 border-b border-[#E8EBE6] dark:border-[#2B3028]"
                 >
                   <View className="flex-row items-center justify-between mb-1.5">
                     <View className="flex-row items-center flex-1 mr-2">
                       <View
-                        className="w-8 h-8 rounded-full items-center justify-center mr-2.5"
+                        className="w-8 h-8 rounded-xl items-center justify-center mr-2.5"
                         style={{ backgroundColor: `${cat.category_color}18` }}
                       >
                         <DynamicIcon name={cat.category_icon} size={16} color={cat.category_color} />
                       </View>
-                      <Text className="text-sm font-semibold text-gray-900" numberOfLines={1}>
+                      <Text
+                        className="text-sm font-bold text-[#0E0F0C] dark:text-[#F4F6F2]"
+                        numberOfLines={1}
+                      >
                         {cat.category_name}
                       </Text>
                     </View>
 
                     <View className="items-end">
-                      <Text className="text-sm font-bold text-gray-900">
+                      <Text className="text-sm font-black text-[#0E0F0C] dark:text-[#F4F6F2]">
                         {formatCurrency(cat.total_amount, currencySymbol)}
                       </Text>
-                      <Text className="text-xs text-gray-400 font-medium">{cat.percentage}%</Text>
+                      <Text className="text-xs text-[#5B5F5A] dark:text-[#A3A8A0] font-bold">
+                        {cat.percentage}%
+                      </Text>
                     </View>
                   </View>
 
                   {/* Horizontal indicator bar per category */}
-                  <View className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden mt-1">
+                  <View className="w-full h-1.5 bg-[#E8EBE6] dark:bg-[#242921] rounded-full overflow-hidden mt-1">
                     <View
                       style={{
                         width: `${cat.percentage}%`,

@@ -66,35 +66,39 @@ export default function HomeScreen() {
   const handleNextMonth = () => setCurrentDate((d) => addMonths(d, 1));
 
   return (
-    <SafeAreaView edges={['left', 'right']} className="flex-1 bg-gray-50">
+    <SafeAreaView edges={['left', 'right']} className="flex-1 bg-[#E8EBE6] dark:bg-[#121411]">
       <ScrollView
         className="flex-1"
-        contentContainerStyle={{ paddingBottom: 90 }}
+        contentContainerStyle={{ paddingBottom: 100 }}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#047857']} />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={['#0E0F0C', '#054D28']}
+          />
         }
       >
-        {/* Month Selector Bar */}
-        <View className="flex-row items-center justify-between px-5 py-3 bg-white border-b border-gray-100">
+        {/* Month Selector Bar - Wise Pill Style */}
+        <View className="mx-4 mt-3 bg-white dark:bg-[#1B1E19] rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028] px-3.5 py-2.5 flex-row items-center justify-between">
           <TouchableOpacity
             onPress={handlePrevMonth}
-            className="p-1.5 rounded-full bg-gray-50 active:bg-gray-100"
+            className="p-1.5 rounded-full bg-[#F4F6F2] dark:bg-[#242921] active:opacity-70"
           >
-            <ChevronLeft size={20} color="#374151" />
+            <ChevronLeft size={18} color="#0E0F0C" />
           </TouchableOpacity>
-          <Text className="text-base font-bold text-gray-900">
+          <Text className="text-xs font-black uppercase tracking-widest text-[#0E0F0C] dark:text-[#F4F6F2]">
             {formatMonthYear(currentDate)}
           </Text>
           <TouchableOpacity
             onPress={handleNextMonth}
-            className="p-1.5 rounded-full bg-gray-50 active:bg-gray-100"
+            className="p-1.5 rounded-full bg-[#F4F6F2] dark:bg-[#242921] active:opacity-70"
           >
-            <ChevronRight size={20} color="#374151" />
+            <ChevronRight size={18} color="#0E0F0C" />
           </TouchableOpacity>
         </View>
 
         {/* Financial Summary Cards */}
-        <View className="px-4 pt-4">
+        <View className="px-4 pt-3">
           <HeroBalanceCard balance={totalBalance} currencySymbol={currencySymbol} />
           <IncomeExpenseSummary
             income={monthlyIncome}
@@ -103,12 +107,19 @@ export default function HomeScreen() {
           />
         </View>
 
-        {/* Recent Transactions Header */}
-        <View className="flex-row items-center justify-between px-5 pt-6 pb-2">
-          <Text className="text-base font-bold text-gray-900">Recent Transactions</Text>
+        {/* Recent Activity Header */}
+        <View className="flex-row items-center justify-between px-5 pt-6 pb-2.5">
+          <Text className="text-xs font-black uppercase tracking-widest text-[#0E0F0C] dark:text-[#F4F6F2]">
+            Recent Activity
+          </Text>
           {recentTransactions.length > 0 && (
-            <TouchableOpacity onPress={() => router.push('/(tabs)/transactions')}>
-              <Text className="text-xs font-semibold text-emerald-700">View All</Text>
+            <TouchableOpacity
+              onPress={() => router.push('/(tabs)/transactions')}
+              className="bg-white dark:bg-[#1B1E19] border border-[#D5D8CF] dark:border-[#2B3028] px-3 py-1 rounded-full"
+            >
+              <Text className="text-[11px] font-black uppercase tracking-wider text-[#0E0F0C] dark:text-[#F4F6F2]">
+                View All ›
+              </Text>
             </TouchableOpacity>
           )}
         </View>
@@ -121,11 +132,11 @@ export default function HomeScreen() {
             subtitle={`You haven't recorded any spending or income for ${formatMonthYear(
               currentDate
             )}.`}
-            actionLabel="Add First Transaction"
+            actionLabel="Add Transaction"
             onAction={() => router.push('/transaction/add')}
           />
         ) : (
-          <View className="bg-white mx-4 rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
+          <View className="bg-white dark:bg-[#1B1E19] mx-4 rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028] overflow-hidden">
             {recentTransactions.slice(0, 10).map((txn) => (
               <TransactionListItem
                 key={txn.id}
@@ -138,13 +149,13 @@ export default function HomeScreen() {
         )}
       </ScrollView>
 
-      {/* Floating Action Button (FAB) */}
+      {/* Floating Action Button (FAB) - Wise Vivid Lime */}
       <TouchableOpacity
         activeOpacity={0.85}
         onPress={() => router.push('/transaction/add')}
-        className="absolute bottom-6 right-6 w-14 h-14 bg-emerald-700 rounded-full items-center justify-center shadow-lg shadow-emerald-900/30 elevation-8"
+        className="absolute bottom-6 right-6 w-14 h-14 bg-[#9FE870] rounded-full items-center justify-center border border-[#86D454] shadow-md shadow-neutral-900/10 active:bg-[#86D454]"
       >
-        <Plus size={28} color="#FFFFFF" />
+        <Plus size={26} color="#0E0F0C" strokeWidth={2.8} />
       </TouchableOpacity>
     </SafeAreaView>
   );

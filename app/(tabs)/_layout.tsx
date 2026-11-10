@@ -2,6 +2,7 @@ import React from 'react';
 import { TouchableOpacity } from 'react-native';
 import { Tabs, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useColorScheme } from 'nativewind';
 import {
   Home,
   Receipt,
@@ -15,27 +16,29 @@ import {
 export default function TabLayout() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === 'dark';
 
   return (
     <Tabs
       screenOptions={{
         headerShown: true,
-        headerStyle: { backgroundColor: '#FFFFFF' },
+        headerStyle: { backgroundColor: isDark ? '#121411' : '#E8EBE6' },
         headerShadowVisible: false,
-        headerTitleStyle: { fontWeight: '800', fontSize: 19, color: '#111827' },
+        headerTitleStyle: { fontWeight: '900', fontSize: 19, color: isDark ? '#F4F6F2' : '#0E0F0C' },
         tabBarStyle: {
-          backgroundColor: '#FFFFFF',
-          borderTopColor: '#F3F4F6',
+          backgroundColor: isDark ? '#1B1E19' : '#FFFFFF',
+          borderTopColor: isDark ? '#2B3028' : '#D5D8CF',
           borderTopWidth: 1,
           height: 56 + Math.max(insets.bottom, 10),
           paddingBottom: Math.max(insets.bottom, 8),
           paddingTop: 6,
         },
-        tabBarActiveTintColor: '#047857',
-        tabBarInactiveTintColor: '#9CA3AF',
+        tabBarActiveTintColor: isDark ? '#9FE870' : '#0E0F0C',
+        tabBarInactiveTintColor: isDark ? '#7E857B' : '#868685',
         tabBarLabelStyle: {
           fontSize: 10,
-          fontWeight: '600',
+          fontWeight: '700',
         },
       }}
     >
@@ -50,7 +53,7 @@ export default function TabLayout() {
               onPress={() => router.push('/settings' as any)}
               className="mr-3 p-1.5 rounded-full"
             >
-              <Settings size={21} color="#4B5563" />
+              <Settings size={21} color={isDark ? '#F4F6F2' : '#0E0F0C'} />
             </TouchableOpacity>
           ),
           tabBarIcon: ({ color, size }) => <Home color={color} size={22} />,

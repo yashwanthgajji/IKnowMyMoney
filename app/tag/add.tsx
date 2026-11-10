@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { Check, Trash2, Tag as TagIcon } from 'lucide-react-native';
+import { Check, Trash2 } from 'lucide-react-native';
 import { TagRepository, TAG_PALETTE } from '../../src/repositories/tag.repository';
 import { useSettingsStore } from '../../src/stores/settings.store';
 import { parseAmountToCents, centsToInputValue } from '../../src/utils/money';
@@ -29,7 +29,6 @@ export default function TagFormScreen() {
   useEffect(() => {
     async function loadTag() {
       if (!id) {
-        // For new tags, get count to preview next assigned color
         try {
           const all = await TagRepository.getAll();
           setColor(TAG_PALETTE[all.length % TAG_PALETTE.length]);
@@ -130,14 +129,14 @@ export default function TagFormScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView className="flex-1 bg-white items-center justify-center">
-        <Text className="text-gray-400">Loading...</Text>
+      <SafeAreaView className="flex-1 bg-[#E8EBE6] dark:bg-[#121411] items-center justify-center">
+        <Text className="text-xs font-bold text-[#868685]">Loading...</Text>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView edges={['bottom', 'left', 'right']} className="flex-1 bg-white">
+    <SafeAreaView edges={['bottom', 'left', 'right']} className="flex-1 bg-[#E8EBE6] dark:bg-[#121411]">
       <ScrollView className="flex-1 p-4" keyboardShouldPersistTaps="handled">
         {/* Color & Icon Preview Banner */}
         <View className="items-center my-4">
@@ -145,53 +144,53 @@ export default function TagFormScreen() {
             style={{ backgroundColor: `${color}20`, borderColor: `${color}40` }}
             className="w-16 h-16 rounded-2xl border items-center justify-center mb-2"
           >
-            <View style={{ backgroundColor: color }} className="w-6 h-6 rounded-full" />
+            <View style={{ backgroundColor: color }} className="w-5 h-5 rounded-full" />
           </View>
-          <Text className="text-xs text-gray-400 font-medium">
+          <Text className="text-xs text-[#5B5F5A] dark:text-[#A3A8A0] font-black uppercase tracking-wider">
             {isEditing ? 'Tag Color' : 'Auto-assigned Color'}
           </Text>
         </View>
 
         {/* Tag Name Input */}
-        <View className="mb-4">
-          <Text className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+        <View className="mb-4 bg-white dark:bg-[#1B1E19] p-4 rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028]">
+          <Text className="text-xs font-black text-[#5B5F5A] dark:text-[#A3A8A0] uppercase tracking-widest mb-1.5">
             Tag Name
           </Text>
           <TextInput
             value={name}
             onChangeText={setName}
             placeholder="e.g. LV Trip, Costco, Me, AllState"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor="#868685"
             maxLength={30}
-            className="bg-gray-50 rounded-xl px-4 py-3 border border-gray-200 text-sm text-gray-800"
+            className="bg-[#F4F6F2] dark:bg-[#242921] rounded-xl px-4 py-3 border border-[#D5D8CF] dark:border-[#2B3028] text-xs font-bold text-[#0E0F0C] dark:text-[#F4F6F2]"
           />
-          <Text className="text-[10px] text-gray-400 mt-1 text-right">
+          <Text className="text-[10px] text-[#868685] font-bold mt-1 text-right">
             {name.length}/30 characters
           </Text>
         </View>
 
         {/* Optional Budget Input */}
-        <View className="mb-6">
+        <View className="mb-6 bg-white dark:bg-[#1B1E19] p-4 rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028]">
           <View className="flex-row items-center justify-between mb-1.5">
-            <Text className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            <Text className="text-xs font-black text-[#5B5F5A] dark:text-[#A3A8A0] uppercase tracking-widest">
               Budget Target (Optional)
             </Text>
-            <Text className="text-[11px] text-emerald-700 font-medium">For trips & events</Text>
+            <Text className="text-[11px] text-[#054D28] dark:text-[#4ADE80] font-black">For trips & events</Text>
           </View>
-          <View className="flex-row items-center bg-gray-50 rounded-xl px-4 py-3 border border-gray-200">
-            <Text className="text-sm font-semibold text-gray-500 mr-2">
+          <View className="flex-row items-center bg-[#F4F6F2] dark:bg-[#242921] rounded-xl px-4 py-3 border border-[#D5D8CF] dark:border-[#2B3028]">
+            <Text className="text-sm font-black text-[#0E0F0C] dark:text-[#F4F6F2] mr-2">
               {currencySymbol}
             </Text>
             <TextInput
               value={budgetStr}
               onChangeText={setBudgetStr}
               placeholder="0.00 (leave empty for no budget)"
-              placeholderTextColor="#9CA3AF"
+              placeholderTextColor="#868685"
               keyboardType="decimal-pad"
-              className="flex-1 text-sm text-gray-800"
+              className="flex-1 text-xs font-bold text-[#0E0F0C] dark:text-[#F4F6F2]"
             />
           </View>
-          <Text className="text-[11px] text-gray-400 mt-1">
+          <Text className="text-[11px] text-[#868685] font-medium mt-1.5">
             Setting a budget gives you a spending progress bar for this tag.
           </Text>
         </View>
@@ -200,10 +199,10 @@ export default function TagFormScreen() {
         <TouchableOpacity
           activeOpacity={0.85}
           onPress={handleSave}
-          className="w-full py-3.5 bg-emerald-700 rounded-xl items-center justify-center flex-row shadow-sm"
+          className="w-full py-4 bg-[#9FE870] rounded-full items-center justify-center flex-row border border-[#86D454]"
         >
-          <Check size={18} color="#FFFFFF" className="mr-2" />
-          <Text className="text-white text-sm font-bold">
+          <Check size={18} color="#0E0F0C" strokeWidth={3} className="mr-2" />
+          <Text className="text-[#0E0F0C] text-xs font-black uppercase tracking-wider">
             {isEditing ? 'Save Changes' : 'Create Tag'}
           </Text>
         </TouchableOpacity>
@@ -213,10 +212,10 @@ export default function TagFormScreen() {
           <TouchableOpacity
             activeOpacity={0.85}
             onPress={handleDelete}
-            className="w-full py-3.5 mt-3 bg-red-50 rounded-xl items-center justify-center flex-row border border-red-200"
+            className="w-full py-3.5 mt-3 bg-red-50 dark:bg-red-950/30 rounded-full items-center justify-center flex-row border border-red-200 dark:border-red-900"
           >
-            <Trash2 size={16} color="#DC2626" className="mr-2" />
-            <Text className="text-red-600 text-sm font-bold">Delete Tag</Text>
+            <Trash2 size={16} color="#A7000D" className="mr-2" />
+            <Text className="text-[#A7000D] dark:text-[#F87171] text-xs font-black uppercase tracking-wider">Delete Tag</Text>
           </TouchableOpacity>
         )}
       </ScrollView>

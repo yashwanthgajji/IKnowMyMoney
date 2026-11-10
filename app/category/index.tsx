@@ -56,18 +56,21 @@ export default function CategoriesScreen() {
   };
 
   return (
-    <SafeAreaView edges={['bottom', 'left', 'right']} className="flex-1 bg-gray-50">
-      {/* Type Toggle */}
-      <View className="flex-row p-4 bg-white border-b border-gray-100">
+    <SafeAreaView edges={['bottom', 'left', 'right']} className="flex-1 bg-[#E8EBE6] dark:bg-[#121411]">
+      {/* Type Toggle - Wise Segmented Pills */}
+      <View className="mx-4 mt-3 bg-white dark:bg-[#1B1E19] p-1.5 rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028] flex-row gap-1.5">
         <TouchableOpacity
+          activeOpacity={0.8}
           onPress={() => setActiveType('expense')}
-          className={`flex-1 py-2.5 rounded-xl items-center mr-2 ${
-            activeType === 'expense' ? 'bg-red-700' : 'bg-gray-100'
+          className={`flex-1 py-2.5 rounded-xl items-center ${
+            activeType === 'expense' ? 'bg-[#A7000D]' : 'bg-transparent'
           }`}
         >
           <Text
-            className={`text-xs font-bold ${
-              activeType === 'expense' ? 'text-white' : 'text-gray-600'
+            className={`text-xs ${
+              activeType === 'expense'
+                ? 'font-black text-white'
+                : 'font-bold text-[#5B5F5A] dark:text-[#A3A8A0]'
             }`}
           >
             Expense Categories
@@ -75,14 +78,17 @@ export default function CategoriesScreen() {
         </TouchableOpacity>
 
         <TouchableOpacity
+          activeOpacity={0.8}
           onPress={() => setActiveType('income')}
-          className={`flex-1 py-2.5 rounded-xl items-center ml-2 ${
-            activeType === 'income' ? 'bg-emerald-700' : 'bg-gray-100'
+          className={`flex-1 py-2.5 rounded-xl items-center ${
+            activeType === 'income' ? 'bg-[#054D28]' : 'bg-transparent'
           }`}
         >
           <Text
-            className={`text-xs font-bold ${
-              activeType === 'income' ? 'text-white' : 'text-gray-600'
+            className={`text-xs ${
+              activeType === 'income'
+                ? 'font-black text-white'
+                : 'font-bold text-[#5B5F5A] dark:text-[#A3A8A0]'
             }`}
           >
             Income Categories
@@ -92,40 +98,43 @@ export default function CategoriesScreen() {
 
       {/* Categories List */}
       <ScrollView className="flex-1 p-4" contentContainerStyle={{ paddingBottom: 90 }}>
-        <View className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
+        <View className="bg-white dark:bg-[#1B1E19] rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028] overflow-hidden">
           {categories.map((cat) => (
             <View
               key={cat.id}
-              className="flex-row items-center justify-between p-3.5 border-b border-gray-100"
+              className="flex-row items-center justify-between p-3.5 border-b border-[#E8EBE6] dark:border-[#2B3028]"
             >
               <View className="flex-row items-center flex-1 mr-2">
                 <View
-                  className="w-10 h-10 rounded-full items-center justify-center mr-3"
-                  style={{ backgroundColor: `${cat.color}15` }}
+                  className="w-10 h-10 rounded-xl items-center justify-center mr-3"
+                  style={{ backgroundColor: `${cat.color}18` }}
                 >
                   <DynamicIcon name={cat.icon} size={20} color={cat.color} />
                 </View>
-                <Text className="text-sm font-semibold text-gray-900">{cat.name}</Text>
+                <Text className="text-sm font-bold text-[#0E0F0C] dark:text-[#F4F6F2]">
+                  {cat.name}
+                </Text>
               </View>
 
               <TouchableOpacity
+                activeOpacity={0.7}
                 onPress={() => handleDelete(cat)}
-                className="p-2 rounded-lg bg-red-50"
+                className="p-2 rounded-xl bg-[#F4F6F2] dark:bg-[#242921]"
               >
-                <Trash2 size={16} color="#B91C1C" />
+                <Trash2 size={16} color="#A7000D" />
               </TouchableOpacity>
             </View>
           ))}
         </View>
       </ScrollView>
 
-      {/* FAB Add Category */}
+      {/* FAB Add Category - Wise Vivid Lime */}
       <TouchableOpacity
         activeOpacity={0.85}
         onPress={() => router.push({ pathname: '/category/add', params: { type: activeType } })}
-        className="absolute bottom-6 right-6 w-14 h-14 bg-emerald-700 rounded-full items-center justify-center shadow-lg shadow-emerald-900/30 elevation-8"
+        className="absolute bottom-6 right-6 w-14 h-14 bg-[#9FE870] rounded-full items-center justify-center border border-[#86D454] shadow-md shadow-neutral-900/10 active:bg-[#86D454]"
       >
-        <Plus size={28} color="#FFFFFF" />
+        <Plus size={26} color="#0E0F0C" strokeWidth={2.8} />
       </TouchableOpacity>
     </SafeAreaView>
   );

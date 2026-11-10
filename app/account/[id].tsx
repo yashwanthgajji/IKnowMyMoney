@@ -18,8 +18,6 @@ import {
   Trash2,
   Pencil,
   X,
-  Wallet,
-  ArrowLeftRight,
 } from 'lucide-react-native';
 import { AccountRepository } from '../../src/repositories/account.repository';
 import { TransactionRepository } from '../../src/repositories/transaction.repository';
@@ -48,7 +46,7 @@ export default function AccountDetailScreen() {
   const [editInitialBalanceStr, setEditInitialBalanceStr] = useState('0');
   const [editIsAsset, setEditIsAsset] = useState(true);
   const [editSelectedIcon, setEditSelectedIcon] = useState('Wallet');
-  const [editSelectedColor, setEditSelectedColor] = useState('#047857');
+  const [editSelectedColor, setEditSelectedColor] = useState('#054D28');
 
   const accountTypes: { type: AccountType; label: string }[] = [
     { type: 'wallet', label: 'Cash / Wallet' },
@@ -60,7 +58,7 @@ export default function AccountDetailScreen() {
   ];
 
   const icons = ['Wallet', 'Landmark', 'CreditCard', 'PiggyBank', 'Banknote', 'Coins', 'TrendingUp', 'Briefcase'];
-  const colors = ['#047857', '#1D4ED8', '#B91C1C', '#D97706', '#7C3AED', '#DB2777', '#0891B2', '#4B5563'];
+  const colors = ['#054D28', '#1D4ED8', '#A7000D', '#B86700', '#7C3AED', '#DB2777', '#0891B2', '#0E0F0C'];
 
   const loadData = useCallback(async () => {
     if (!id) return;
@@ -82,13 +80,14 @@ export default function AccountDetailScreen() {
       setEditSelectedIcon(acc.icon);
       setEditSelectedColor(acc.color);
 
-      // Load account transactions
+      // Load all transactions for this account
       const txns = await TransactionRepository.getByAccountId(accountId);
       setTransactions(txns);
+      setLoading(false);
     } catch (e) {
       console.error('Failed to load account details', e);
-    } finally {
-      setLoading(false);
+      Alert.alert('Error', 'Failed to load account.');
+      router.back();
     }
   }, [id]);
 
@@ -103,14 +102,17 @@ export default function AccountDetailScreen() {
   };
 
   const handleSaveEdit = async () => {
-    if (!id || !editName.trim()) {
+    if (!id || !account) return;
+    if (!editName.trim()) {
       Alert.alert('Name Required', 'Please enter an account name.');
       return;
     }
 
     try {
+      const accountId = parseInt(id, 10);
       const initialBalance = parseAmountToCents(editInitialBalanceStr);
-      await AccountRepository.update(parseInt(id, 10), {
+
+      await AccountRepository.update(accountId, {
         name: editName.trim(),
         type: editType,
         icon: editSelectedIcon,
@@ -128,10 +130,20 @@ export default function AccountDetailScreen() {
   };
 
   const handleDelete = () => {
-    if (!id) return;
+    if (!id || !account) return;
+
+    if (transactions.length > 0) {
+      Alert.alert(
+        'Cannot Delete Account',
+        `This account has ${transactions.length} associated transactions. Delete or reassign these transactions first to protect your ledger history.`,
+        [{ text: 'OK', style: 'default' }]
+      );
+      return;
+    }
+
     Alert.alert(
       'Delete Account',
-      'Deleting this account will permanently delete all associated transactions. Are you sure?',
+      `Are you sure you want to delete "${account.name}"? This action cannot be undone.`,
       [
         { text: 'Cancel', style: 'cancel' },
         {
@@ -152,50 +164,50 @@ export default function AccountDetailScreen() {
     );
   };
 
-  if (loading) {
+  if (loading || !account) {
     return (
-      <View className="flex-1 items-center justify-center bg-white">
-        <ActivityIndicator size="large" color="#047857" />
+      <View className="flex-1 items-center justify-center bg-[#E8EBE6] dark:bg-[#121411]">
+        <ActivityIndicator size="large" color="#0E0F0C" />
       </View>
     );
   }
 
-  if (!account) return null;
-
-  const currentBal = account.current_balance;
+  const currentBal = account.current_balance ?? account.initial_balance;
   const isPositive = currentBal >= 0;
 
   return (
-    <SafeAreaView edges={['bottom', 'left', 'right']} className="flex-1 bg-gray-50">
+    <SafeAreaView edges={['bottom', 'left', 'right']} className="flex-1 bg-[#E8EBE6] dark:bg-[#121411]">
       <ScrollView
         className="flex-1"
         contentContainerStyle={{ paddingBottom: 60 }}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={['#0E0F0C', '#054D28']}
+          />
+        }
       >
-        {/* Hero Account Overview Card */}
-        <View className="m-4 bg-white rounded-2xl p-5 border border-gray-100 shadow-sm">
+        {/* Account Header Hero Card - Wise Flat Card */}
+        <View className="m-4 bg-white dark:bg-[#1B1E19] rounded-2xl p-5 border border-[#D5D8CF] dark:border-[#2B3028]">
           <View className="flex-row items-center justify-between mb-3">
             <View className="flex-row items-center flex-1 mr-2">
               <View
                 style={{ backgroundColor: `${account.color}20` }}
-                className="w-12 h-12 rounded-2xl items-center justify-center mr-3"
+                className="w-12 h-12 rounded-xl items-center justify-center mr-3"
               >
                 <DynamicIcon name={account.icon} size={24} color={account.color} />
               </View>
               <View className="flex-1">
-                <Text className="text-lg font-extrabold text-gray-900" numberOfLines={1}>
+                <Text
+                  className="text-lg font-black text-[#0E0F0C] dark:text-[#F4F6F2]"
+                  numberOfLines={1}
+                >
                   {account.name}
                 </Text>
-                <View className="flex-row items-center mt-0.5">
-                  <View className="bg-gray-100 px-2 py-0.5 rounded-md mr-2">
-                    <Text className="text-[10px] font-semibold text-gray-600 capitalize">
-                      {account.type}
-                    </Text>
-                  </View>
-                  <Text className="text-[11px] text-gray-400">
-                    {account.is_asset === 1 ? 'Asset' : 'Liability'}
-                  </Text>
-                </View>
+                <Text className="text-xs text-[#5B5F5A] dark:text-[#A3A8A0] font-bold capitalize">
+                  {account.type} • {account.is_asset === 1 ? 'Asset' : 'Liability'}
+                </Text>
               </View>
             </View>
 
@@ -203,30 +215,30 @@ export default function AccountDetailScreen() {
             <TouchableOpacity
               activeOpacity={0.7}
               onPress={() => setEditModalVisible(true)}
-              className="flex-row items-center bg-gray-100 px-3 py-1.5 rounded-full"
+              className="flex-row items-center bg-[#F4F6F2] dark:bg-[#242921] px-3 py-1.5 rounded-full border border-[#D5D8CF] dark:border-[#2B3028]"
             >
-              <Pencil size={13} color="#374151" />
-              <Text className="text-xs font-bold text-gray-700 ml-1">Edit</Text>
+              <Pencil size={13} color="#0E0F0C" />
+              <Text className="text-xs font-black text-[#0E0F0C] dark:text-[#F4F6F2] ml-1">Edit</Text>
             </TouchableOpacity>
           </View>
 
           {/* Balance Display */}
-          <View className="mt-2 pt-3 border-t border-gray-100">
-            <Text className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">
+          <View className="mt-2 pt-3 border-t border-[#E8EBE6] dark:border-[#2B3028]">
+            <Text className="text-xs font-black text-[#5B5F5A] dark:text-[#A3A8A0] uppercase tracking-widest mb-1">
               Current Balance
             </Text>
             <Text
-              className={`text-3xl font-black ${
-                isPositive ? 'text-gray-900' : 'text-red-700'
+              className={`text-3xl font-black tracking-tight ${
+                isPositive ? 'text-[#0E0F0C] dark:text-[#F4F6F2]' : 'text-[#A7000D] dark:text-[#F87171]'
               }`}
             >
               {formatCurrency(currentBal, currencySymbol, decimalPlaces)}
             </Text>
             <View className="flex-row justify-between items-center mt-2">
-              <Text className="text-xs text-gray-400">
+              <Text className="text-xs text-[#5B5F5A] dark:text-[#A3A8A0] font-medium">
                 Initial: {formatCurrency(account.initial_balance, currencySymbol, decimalPlaces)}
               </Text>
-              <Text className="text-xs text-gray-500 font-medium">
+              <Text className="text-xs text-[#5B5F5A] dark:text-[#A3A8A0] font-black">
                 {transactions.length} {transactions.length === 1 ? 'transaction' : 'transactions'}
               </Text>
             </View>
@@ -234,14 +246,14 @@ export default function AccountDetailScreen() {
         </View>
 
         {/* Transactions Section Header */}
-        <View className="px-4 mb-2 flex-row items-center justify-between">
-          <Text className="text-xs font-bold text-gray-500 uppercase tracking-wider">
+        <View className="px-5 mb-2 flex-row items-center justify-between">
+          <Text className="text-xs font-black uppercase tracking-widest text-[#0E0F0C] dark:text-[#F4F6F2]">
             Account Transactions ({transactions.length})
           </Text>
         </View>
 
         {/* Transactions List */}
-        <View className="mx-4 bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
+        <View className="mx-4 bg-white dark:bg-[#1B1E19] rounded-2xl overflow-hidden border border-[#D5D8CF] dark:border-[#2B3028]">
           {transactions.map((txn) => (
             <TransactionListItem
               key={txn.id}
@@ -255,7 +267,7 @@ export default function AccountDetailScreen() {
             <EmptyState
               icon="Receipt"
               title="No transactions yet"
-              subtitle="Transactions added to this account will appear here."
+              subtitle="Transactions recorded for this account will appear here."
             />
           )}
         </View>
@@ -268,36 +280,39 @@ export default function AccountDetailScreen() {
         presentationStyle="pageSheet"
         onRequestClose={() => setEditModalVisible(false)}
       >
-        <SafeAreaView edges={['top', 'bottom', 'left', 'right']} className="flex-1 bg-white">
+        <SafeAreaView edges={['top', 'bottom', 'left', 'right']} className="flex-1 bg-[#E8EBE6] dark:bg-[#121411]">
           {/* Modal Header */}
-          <View className="flex-row items-center justify-between px-4 py-3 border-b border-gray-100">
-            <Text className="text-base font-bold text-gray-900">Edit Account Details</Text>
+          <View className="flex-row items-center justify-between px-4 py-3 bg-white dark:bg-[#1B1E19] border-b border-[#D5D8CF] dark:border-[#2B3028]">
+            <Text className="text-xs font-black uppercase tracking-widest text-[#0E0F0C] dark:text-[#F4F6F2]">
+              Edit Account Details
+            </Text>
             <TouchableOpacity
+              activeOpacity={0.7}
               onPress={() => setEditModalVisible(false)}
-              className="w-9 h-9 rounded-full bg-gray-100 items-center justify-center"
+              className="w-9 h-9 rounded-full bg-[#F4F6F2] dark:bg-[#242921] items-center justify-center"
             >
-              <X size={18} color="#4B5563" />
+              <X size={18} color="#0E0F0C" />
             </TouchableOpacity>
           </View>
 
           <ScrollView className="flex-1 p-4" keyboardShouldPersistTaps="handled">
             {/* Name input */}
-            <View className="mb-4">
-              <Text className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+            <View className="mb-4 bg-white dark:bg-[#1B1E19] p-4 rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028]">
+              <Text className="text-xs font-black text-[#5B5F5A] dark:text-[#A3A8A0] uppercase tracking-widest mb-1.5">
                 Account Name
               </Text>
               <TextInput
                 value={editName}
                 onChangeText={setEditName}
                 placeholder="Account Name"
-                placeholderTextColor="#9CA3AF"
-                className="bg-gray-50 rounded-xl px-4 py-3 border border-gray-200 text-sm text-gray-900"
+                placeholderTextColor="#868685"
+                className="bg-[#F4F6F2] dark:bg-[#242921] rounded-xl px-4 py-3 border border-[#D5D8CF] dark:border-[#2B3028] text-xs font-bold text-[#0E0F0C] dark:text-[#F4F6F2]"
               />
             </View>
 
             {/* Initial Balance */}
-            <View className="mb-4">
-              <Text className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+            <View className="mb-4 bg-white dark:bg-[#1B1E19] p-4 rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028]">
+              <Text className="text-xs font-black text-[#5B5F5A] dark:text-[#A3A8A0] uppercase tracking-widest mb-1.5">
                 Initial Balance ({currencySymbol})
               </Text>
               <TextInput
@@ -305,14 +320,14 @@ export default function AccountDetailScreen() {
                 onChangeText={setEditInitialBalanceStr}
                 keyboardType="decimal-pad"
                 placeholder="0.00"
-                placeholderTextColor="#9CA3AF"
-                className="bg-gray-50 rounded-xl px-4 py-3 border border-gray-200 text-sm text-gray-900"
+                placeholderTextColor="#868685"
+                className="bg-[#F4F6F2] dark:bg-[#242921] rounded-xl px-4 py-3 border border-[#D5D8CF] dark:border-[#2B3028] text-sm font-black text-[#0E0F0C] dark:text-[#F4F6F2]"
               />
             </View>
 
             {/* Account Type */}
-            <View className="mb-4">
-              <Text className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+            <View className="mb-4 bg-white dark:bg-[#1B1E19] p-4 rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028]">
+              <Text className="text-xs font-black text-[#5B5F5A] dark:text-[#A3A8A0] uppercase tracking-widest mb-2">
                 Account Type
               </Text>
               <View className="flex-row flex-wrap gap-2">
@@ -321,16 +336,19 @@ export default function AccountDetailScreen() {
                   return (
                     <TouchableOpacity
                       key={t.type}
+                      activeOpacity={0.7}
                       onPress={() => setEditType(t.type)}
-                      className={`px-3 py-2 rounded-xl border ${
+                      className={`px-3 py-2 rounded-full border ${
                         isSelected
-                          ? 'bg-emerald-700 border-emerald-700'
-                          : 'bg-gray-50 border-gray-200'
+                          ? 'bg-[#9FE870] border-[#9FE870]'
+                          : 'bg-[#F4F6F2] dark:bg-[#242921] border-[#D5D8CF] dark:border-[#2B3028]'
                       }`}
                     >
                       <Text
-                        className={`text-xs font-semibold ${
-                          isSelected ? 'text-white' : 'text-gray-700'
+                        className={`text-xs ${
+                          isSelected
+                            ? 'text-[#0E0F0C] font-black'
+                            : 'text-[#5B5F5A] dark:text-[#A3A8A0] font-bold'
                         }`}
                       >
                         {t.label}
@@ -342,44 +360,41 @@ export default function AccountDetailScreen() {
             </View>
 
             {/* Is Asset Switch */}
-            <View className="flex-row items-center justify-between py-3 px-4 bg-gray-50 rounded-xl border border-gray-200 mb-4">
+            <View className="flex-row items-center justify-between p-4 bg-white dark:bg-[#1B1E19] rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028] mb-4">
               <View>
-                <Text className="text-sm font-bold text-gray-900">Include as Asset</Text>
-                <Text className="text-xs text-gray-500">
+                <Text className="text-sm font-black text-[#0E0F0C] dark:text-[#F4F6F2]">Include as Asset</Text>
+                <Text className="text-xs text-[#5B5F5A] dark:text-[#A3A8A0] font-medium">
                   {editIsAsset ? 'Adds to your Net Worth' : 'Counts as Debt/Liability'}
                 </Text>
               </View>
               <Switch
                 value={editIsAsset}
                 onValueChange={setEditIsAsset}
-                trackColor={{ false: '#D1D5DB', true: '#047857' }}
-                thumbColor="#FFFFFF"
+                trackColor={{ false: '#D5D8CF', true: '#9FE870' }}
+                thumbColor="#0E0F0C"
               />
             </View>
 
             {/* Icon Picker */}
-            <View className="mb-4">
-              <Text className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+            <View className="mb-4 bg-white dark:bg-[#1B1E19] p-4 rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028]">
+              <Text className="text-xs font-black text-[#5B5F5A] dark:text-[#A3A8A0] uppercase tracking-widest mb-2">
                 Icon
               </Text>
-              <View className="flex-row flex-wrap gap-3">
+              <View className="flex-row flex-wrap gap-2.5">
                 {icons.map((ic) => {
                   const isSelected = editSelectedIcon === ic;
                   return (
                     <TouchableOpacity
                       key={ic}
+                      activeOpacity={0.7}
                       onPress={() => setEditSelectedIcon(ic)}
-                      className={`w-12 h-12 rounded-xl items-center justify-center border ${
+                      className={`w-11 h-11 rounded-xl items-center justify-center border ${
                         isSelected
-                          ? 'border-2 border-emerald-700 bg-emerald-50'
-                          : 'border-gray-200 bg-gray-50'
+                          ? 'border-2 border-[#0E0F0C] dark:border-[#F4F6F2] bg-[#E8EBE6] dark:bg-[#242921]'
+                          : 'border-[#D5D8CF] dark:border-[#2B3028] bg-[#F4F6F2] dark:bg-[#242921]'
                       }`}
                     >
-                      <DynamicIcon
-                        name={ic}
-                        size={22}
-                        color={isSelected ? '#047857' : '#4B5563'}
-                      />
+                      <DynamicIcon name={ic} size={20} color={isSelected ? '#0E0F0C' : '#5B5F5A'} />
                     </TouchableOpacity>
                   );
                 })}
@@ -387,22 +402,23 @@ export default function AccountDetailScreen() {
             </View>
 
             {/* Color Picker */}
-            <View className="mb-6">
-              <Text className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+            <View className="mb-6 bg-white dark:bg-[#1B1E19] p-4 rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028]">
+              <Text className="text-xs font-black text-[#5B5F5A] dark:text-[#A3A8A0] uppercase tracking-widest mb-2">
                 Color
               </Text>
-              <View className="flex-row flex-wrap gap-3">
+              <View className="flex-row flex-wrap gap-2.5">
                 {colors.map((c) => {
                   const isSelected = editSelectedColor === c;
                   return (
                     <TouchableOpacity
                       key={c}
+                      activeOpacity={0.7}
                       onPress={() => setEditSelectedColor(c)}
                       className="w-10 h-10 rounded-full items-center justify-center"
                       style={{
                         backgroundColor: c,
                         borderWidth: isSelected ? 3 : 0,
-                        borderColor: '#111827',
+                        borderColor: '#0E0F0C',
                       }}
                     >
                       {isSelected && <Check size={16} color="#FFFFFF" />}
@@ -413,23 +429,23 @@ export default function AccountDetailScreen() {
             </View>
 
             {/* Action Buttons */}
-            <View className="gap-3 mb-8">
+            <View className="gap-2.5 mb-8">
               <TouchableOpacity
                 activeOpacity={0.85}
                 onPress={handleSaveEdit}
-                className="w-full py-4 bg-emerald-700 rounded-xl items-center justify-center flex-row shadow-sm"
+                className="w-full py-4 bg-[#9FE870] rounded-full items-center justify-center flex-row border border-[#86D454]"
               >
-                <Check size={18} color="#FFFFFF" className="mr-2" />
-                <Text className="text-white text-sm font-bold">Save Changes</Text>
+                <Check size={18} color="#0E0F0C" strokeWidth={3} className="mr-2" />
+                <Text className="text-[#0E0F0C] text-xs font-black uppercase tracking-wider">Save Changes</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
                 activeOpacity={0.85}
                 onPress={handleDelete}
-                className="w-full py-3.5 bg-red-50 border border-red-200 rounded-xl items-center justify-center flex-row"
+                className="w-full py-3.5 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 rounded-full items-center justify-center flex-row"
               >
-                <Trash2 size={18} color="#B91C1C" className="mr-2" />
-                <Text className="text-red-700 text-sm font-bold">Delete Account</Text>
+                <Trash2 size={16} color="#A7000D" className="mr-2" />
+                <Text className="text-[#A7000D] dark:text-[#F87171] text-xs font-black uppercase tracking-wider">Delete Account</Text>
               </TouchableOpacity>
             </View>
           </ScrollView>

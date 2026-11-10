@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useFocusEffect } from 'expo-router';
-import { Search, X, Calendar, Filter } from 'lucide-react-native';
+import { Search, X } from 'lucide-react-native';
 import { TransactionRepository } from '../../src/repositories/transaction.repository';
 import { useSettingsStore } from '../../src/stores/settings.store';
 import { TransactionWithDetails } from '../../src/types';
@@ -62,42 +62,45 @@ export default function TransactionsScreen() {
     .reduce((sum, t) => sum + t.amount, 0);
 
   return (
-    <SafeAreaView edges={['left', 'right']} className="flex-1 bg-gray-50">
-      {/* Search Input Bar */}
-      <View className="px-4 py-3 bg-white border-b border-gray-100">
-        <View className="flex-row items-center bg-gray-50 rounded-xl px-3 py-2 border border-gray-200">
-          <Search size={18} color="#9CA3AF" />
+    <SafeAreaView edges={['left', 'right']} className="flex-1 bg-[#E8EBE6] dark:bg-[#121411]">
+      {/* Search Input & Filter Card */}
+      <View className="mx-4 mt-3 bg-white dark:bg-[#1B1E19] p-3 rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028]">
+        <View className="flex-row items-center bg-[#F4F6F2] dark:bg-[#242921] rounded-xl px-3 py-2 border border-[#D5D8CF] dark:border-[#2B3028]">
+          <Search size={16} color="#5B5F5A" />
           <TextInput
             value={searchQuery}
             onChangeText={setSearchQuery}
-            placeholder="Search by note, category, or account..."
-            placeholderTextColor="#9CA3AF"
-            className="flex-1 ml-2 text-sm text-gray-900"
+            placeholder="Search note, category, or account..."
+            placeholderTextColor="#868685"
+            className="flex-1 ml-2 text-xs font-semibold text-[#0E0F0C] dark:text-[#F4F6F2]"
           />
           {searchQuery.length > 0 && (
             <TouchableOpacity onPress={() => setSearchQuery('')}>
-              <X size={16} color="#9CA3AF" />
+              <X size={16} color="#5B5F5A" />
             </TouchableOpacity>
           )}
         </View>
 
-        {/* Filter Chips */}
-        <View className="flex-row mt-3 gap-2">
+        {/* Filter Chips - Wise Style */}
+        <View className="flex-row mt-2.5 gap-1.5">
           {(['all', 'expense', 'income', 'transfer'] as const).map((f) => {
             const isSelected = filterType === f;
             return (
               <TouchableOpacity
                 key={f}
+                activeOpacity={0.8}
                 onPress={() => setFilterType(f)}
-                className={`px-3 py-1.5 rounded-lg border capitalize ${
+                className={`px-3 py-1.5 rounded-full border capitalize ${
                   isSelected
-                    ? 'bg-emerald-700 border-emerald-700'
-                    : 'bg-white border-gray-200'
+                    ? 'bg-[#9FE870] border-[#9FE870]'
+                    : 'bg-[#F4F6F2] dark:bg-[#242921] border-[#D5D8CF] dark:border-[#2B3028]'
                 }`}
               >
                 <Text
-                  className={`text-xs font-semibold ${
-                    isSelected ? 'text-white' : 'text-gray-600'
+                  className={`text-xs ${
+                    isSelected
+                      ? 'font-black text-[#0E0F0C]'
+                      : 'font-bold text-[#5B5F5A] dark:text-[#A3A8A0]'
                   }`}
                 >
                   {f}
@@ -108,47 +111,47 @@ export default function TransactionsScreen() {
         </View>
       </View>
 
-      {/* Mini Summary of current view */}
-      <View className="flex-row justify-between items-center px-4 py-2 bg-gray-100 border-b border-gray-200">
-        <Text className="text-xs text-gray-500 font-medium">
-          {transactions.length} records found
+      {/* Mini Summary Strip */}
+      <View className="flex-row justify-between items-center px-5 pt-3 pb-1">
+        <Text className="text-xs font-black uppercase tracking-wider text-[#5B5F5A] dark:text-[#A3A8A0]">
+          {transactions.length} records
         </Text>
         <View className="flex-row gap-3">
-          <Text className="text-xs text-emerald-700 font-bold">
+          <Text className="text-xs font-black text-[#054D28] dark:text-[#4ADE80]">
             +{formatCurrency(totalIncome, currencySymbol)}
           </Text>
-          <Text className="text-xs text-red-700 font-bold">
+          <Text className="text-xs font-black text-[#A7000D] dark:text-[#F87171]">
             -{formatCurrency(totalExpense, currencySymbol)}
           </Text>
         </View>
       </View>
 
       {/* Transactions List */}
-      <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 24 }}>
+      <ScrollView className="flex-1 pt-1" contentContainerStyle={{ paddingBottom: 60 }}>
         {transactions.length === 0 ? (
           <EmptyState
             icon="Search"
             title="No records found"
-            subtitle="Try adjusting your search terms or filter."
+            subtitle="Try adjusting your search query or filter."
           />
         ) : (
           <View>
             {groupTransactionsByDate(transactions).map((group) => (
-              <View key={group.dateKey} className="mb-2">
+              <View key={group.dateKey} className="mb-3">
                 {/* Section Date Header */}
-                <View className="flex-row justify-between items-center px-4 py-2 bg-gray-100 border-b border-t border-gray-200">
-                  <Text className="text-xs font-bold text-gray-700">
+                <View className="flex-row justify-between items-center px-5 py-1.5">
+                  <Text className="text-xs font-black uppercase tracking-widest text-[#0E0F0C] dark:text-[#F4F6F2]">
                     {group.heading}
                   </Text>
                   {group.totalExpense > 0 && (
-                    <Text className="text-xs font-semibold text-gray-500">
+                    <Text className="text-xs font-black text-[#A7000D] dark:text-[#F87171]">
                       Spent: {formatCurrency(group.totalExpense, currencySymbol)}
                     </Text>
                   )}
                 </View>
 
                 {/* Items in this date group */}
-                <View className="bg-white">
+                <View className="mx-4 bg-white dark:bg-[#1B1E19] rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028] overflow-hidden">
                   {group.items.map((txn: TransactionWithDetails) => (
                     <TransactionListItem
                       key={txn.id}

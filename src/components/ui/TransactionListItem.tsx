@@ -22,10 +22,10 @@ export function TransactionListItem({
   const isTransfer = transaction.type === 'transfer';
 
   const amountColor = isIncome
-    ? 'text-emerald-700'
+    ? 'text-[#054D28] dark:text-[#4ADE80]'
     : isTransfer
-    ? 'text-blue-700'
-    : 'text-red-700';
+    ? 'text-[#1D4ED8] dark:text-[#60A5FA]'
+    : 'text-[#A7000D] dark:text-[#F87171]';
 
   const amountPrefix = isIncome ? '+' : isTransfer ? '' : '-';
 
@@ -37,12 +37,12 @@ export function TransactionListItem({
     <TouchableOpacity
       activeOpacity={0.7}
       onPress={onPress}
-      className="flex-row items-center justify-between py-3.5 px-4 bg-white border-b border-gray-100"
+      className="flex-row items-center justify-between py-3.5 px-4 bg-white dark:bg-[#1B1E19] border-b border-[#E8EBE6] dark:border-[#2B3028]"
     >
       <View className="flex-row items-center flex-1 mr-3">
         {/* Category / Transfer Icon */}
         <View
-          className="w-11 h-11 rounded-full items-center justify-center mr-3"
+          className="w-10 h-10 rounded-xl items-center justify-center mr-3"
           style={{
             backgroundColor: isTransfer
               ? '#DBEAFE'
@@ -52,27 +52,36 @@ export function TransactionListItem({
           }}
         >
           {isTransfer ? (
-            <ArrowLeftRight size={20} color="#1D4ED8" />
+            <ArrowLeftRight size={18} color="#1D4ED8" />
           ) : (
             <DynamicIcon
               name={transaction.category_icon || 'Tag'}
-              size={20}
-              color={transaction.category_color || '#4B5563'}
+              size={18}
+              color={transaction.category_color || '#454745'}
             />
           )}
         </View>
 
         {/* Text details */}
         <View className="flex-1">
-          <Text className="text-sm font-semibold text-gray-900" numberOfLines={1}>
+          <Text
+            className="text-sm font-bold text-[#0E0F0C] dark:text-[#F4F6F2]"
+            numberOfLines={1}
+          >
             {title}
           </Text>
           <View className="flex-row items-center mt-0.5">
-            <Text className="text-xs text-gray-500 mr-2" numberOfLines={1}>
+            <Text
+              className="text-xs text-[#5B5F5A] dark:text-[#A3A8A0] font-medium mr-2"
+              numberOfLines={1}
+            >
               {transaction.account_name}
             </Text>
             {transaction.note ? (
-              <Text className="text-xs text-gray-400 italic flex-1" numberOfLines={1}>
+              <Text
+                className="text-xs text-[#868685] italic flex-1"
+                numberOfLines={1}
+              >
                 • {transaction.note.replace(/\n/g, ' ')}
               </Text>
             ) : null}
@@ -85,7 +94,7 @@ export function TransactionListItem({
                 <TagChip key={tag.id} name={tag.name} color={tag.color} size="sm" />
               ))}
               {transaction.tags.length > 3 && (
-                <Text className="text-[10px] text-gray-400 font-medium ml-0.5 mb-1">
+                <Text className="text-[11px] text-[#868685] font-bold ml-1 mb-1">
                   +{transaction.tags.length - 3}
                 </Text>
               )}
@@ -96,11 +105,11 @@ export function TransactionListItem({
 
       {/* Amount and Date */}
       <View className="items-end">
-        <Text className={`text-sm font-bold ${amountColor}`}>
+        <Text className={`text-sm font-black ${amountColor} tracking-tight`}>
           {amountPrefix}
           {formatCurrency(transaction.amount, currencySymbol)}
         </Text>
-        <Text className="text-[11px] text-gray-400 mt-0.5">
+        <Text className="text-xs text-[#868685] font-medium mt-0.5">
           {formatDateTimeBadge(transaction.date)}
         </Text>
       </View>

@@ -26,9 +26,9 @@ export function NumericKeypad({ onKeyPress, onDelete }: NumericKeypadProps) {
                   key={item}
                   activeOpacity={0.6}
                   onPress={onDelete}
-                  className="flex-1 h-14 bg-gray-100 rounded-xl items-center justify-center active:bg-gray-200"
+                  className="flex-1 h-14 bg-[#F4F6F2] dark:bg-[#242921] rounded-2xl items-center justify-center border border-[#D5D8CF] dark:border-[#2B3028] active:opacity-70"
                 >
-                  <Delete size={22} color="#374151" />
+                  <Delete size={22} color="#0E0F0C" />
                 </TouchableOpacity>
               );
             }
@@ -38,9 +38,9 @@ export function NumericKeypad({ onKeyPress, onDelete }: NumericKeypadProps) {
                 key={item}
                 activeOpacity={0.6}
                 onPress={() => onKeyPress(item)}
-                className="flex-1 h-14 bg-gray-50 rounded-xl items-center justify-center border border-gray-100 active:bg-gray-200"
+                className="flex-1 h-14 bg-white dark:bg-[#1B1E19] rounded-2xl items-center justify-center border border-[#D5D8CF] dark:border-[#2B3028] active:bg-[#F4F6F2] dark:active:bg-[#242921]"
               >
-                <Text className="text-xl font-bold text-gray-800">{item}</Text>
+                <Text className="text-xl font-black text-[#0E0F0C] dark:text-[#F4F6F2]">{item}</Text>
               </TouchableOpacity>
             );
           })}

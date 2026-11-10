@@ -69,11 +69,11 @@ export default function AddBudgetScreen() {
   };
 
   return (
-    <SafeAreaView edges={['bottom', 'left', 'right']} className="flex-1 bg-white">
+    <SafeAreaView edges={['bottom', 'left', 'right']} className="flex-1 bg-[#E8EBE6] dark:bg-[#121411]">
       <ScrollView className="flex-1 p-4" keyboardShouldPersistTaps="handled">
         {/* Budget Limit Amount */}
-        <View className="mb-4">
-          <Text className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+        <View className="mb-4 bg-white dark:bg-[#1B1E19] p-4 rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028]">
+          <Text className="text-xs font-black text-[#5B5F5A] dark:text-[#A3A8A0] uppercase tracking-widest mb-1.5">
             Spending Limit ({currencySymbol})
           </Text>
           <TextInput
@@ -81,28 +81,35 @@ export default function AddBudgetScreen() {
             onChangeText={setAmountStr}
             keyboardType="decimal-pad"
             placeholder="0.00"
-            placeholderTextColor="#9CA3AF"
-            className="bg-gray-50 rounded-xl px-4 py-3 border border-gray-200 text-lg font-bold text-gray-900"
+            placeholderTextColor="#868685"
+            className="bg-[#F4F6F2] dark:bg-[#242921] rounded-xl px-4 py-3 border border-[#D5D8CF] dark:border-[#2B3028] text-base font-black text-[#0E0F0C] dark:text-[#F4F6F2]"
           />
         </View>
 
         {/* Period Selector */}
-        <View className="mb-4">
-          <Text className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+        <View className="mb-4 bg-white dark:bg-[#1B1E19] p-4 rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028]">
+          <Text className="text-xs font-black text-[#5B5F5A] dark:text-[#A3A8A0] uppercase tracking-widest mb-2">
             Budget Period
           </Text>
-          <View className="flex-row bg-gray-100 p-1 rounded-xl">
+          <View className="flex-row bg-[#F4F6F2] dark:bg-[#242921] p-1 rounded-xl">
             {(['monthly', 'yearly'] as const).map((p) => {
               const isSelected = period === p;
               return (
                 <TouchableOpacity
                   key={p}
+                  activeOpacity={0.7}
                   onPress={() => setPeriod(p)}
                   className={`flex-1 py-2.5 rounded-lg items-center capitalize ${
-                    isSelected ? 'bg-emerald-700' : 'bg-transparent'
+                    isSelected ? 'bg-[#9FE870]' : 'bg-transparent'
                   }`}
                 >
-                  <Text className={`text-xs font-bold ${isSelected ? 'text-white' : 'text-gray-600'}`}>
+                  <Text
+                    className={`text-xs ${
+                      isSelected
+                        ? 'text-[#0E0F0C] font-black'
+                        : 'text-[#5B5F5A] dark:text-[#A3A8A0] font-bold'
+                    }`}
+                  >
                     {p}
                   </Text>
                 </TouchableOpacity>
@@ -112,8 +119,8 @@ export default function AddBudgetScreen() {
         </View>
 
         {/* Category Selector */}
-        <View className="mb-6">
-          <Text className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+        <View className="mb-6 bg-white dark:bg-[#1B1E19] p-4 rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028]">
+          <Text className="text-xs font-black text-[#5B5F5A] dark:text-[#A3A8A0] uppercase tracking-widest mb-2">
             Select Category
           </Text>
           <View className="flex-row flex-wrap gap-2">
@@ -122,19 +129,24 @@ export default function AddBudgetScreen() {
               return (
                 <TouchableOpacity
                   key={cat.id}
+                  activeOpacity={0.7}
                   onPress={() => setSelectedCategoryId(cat.id)}
-                  className={`flex-row items-center px-3 py-2.5 rounded-xl border ${
-                    isSelected ? 'bg-emerald-700 border-emerald-700' : 'bg-gray-50 border-gray-200'
+                  className={`flex-row items-center px-3.5 py-2.5 rounded-full border ${
+                    isSelected
+                      ? 'bg-[#9FE870] border-[#9FE870]'
+                      : 'bg-[#F4F6F2] dark:bg-[#242921] border-[#D5D8CF] dark:border-[#2B3028]'
                   }`}
                 >
                   <DynamicIcon
                     name={cat.icon}
-                    size={18}
-                    color={isSelected ? '#FFFFFF' : cat.color}
+                    size={16}
+                    color={isSelected ? '#0E0F0C' : cat.color}
                   />
                   <Text
-                    className={`text-xs font-semibold ml-2 ${
-                      isSelected ? 'text-white' : 'text-gray-800'
+                    className={`text-xs ml-1.5 ${
+                      isSelected
+                        ? 'text-[#0E0F0C] font-black'
+                        : 'text-[#0E0F0C] dark:text-[#F4F6F2] font-bold'
                     }`}
                   >
                     {cat.name}
@@ -149,10 +161,10 @@ export default function AddBudgetScreen() {
         <TouchableOpacity
           activeOpacity={0.85}
           onPress={handleSave}
-          className="w-full py-4 bg-emerald-700 rounded-xl items-center justify-center flex-row shadow-sm mb-6"
+          className="w-full py-4 bg-[#9FE870] rounded-full items-center justify-center flex-row border border-[#86D454] mb-8"
         >
-          <Check size={18} color="#FFFFFF" className="mr-2" />
-          <Text className="text-white text-sm font-bold">Set Budget</Text>
+          <Check size={18} color="#0E0F0C" strokeWidth={3} className="mr-2" />
+          <Text className="text-[#0E0F0C] text-xs font-black uppercase tracking-wider">Set Budget</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>

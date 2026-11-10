@@ -5,17 +5,13 @@ import {
   ScrollView,
   TouchableOpacity,
   RefreshControl,
-  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useFocusEffect } from 'expo-router';
 import {
   Plus,
-  Tags as TagsIcon,
   Edit2,
-  Calendar,
   AlertTriangle,
-  ArrowRight,
 } from 'lucide-react-native';
 import { TagRepository } from '../../src/repositories/tag.repository';
 import { useSettingsStore } from '../../src/stores/settings.store';
@@ -42,7 +38,6 @@ export default function TagsScreen() {
       setTags(stats);
 
       if (selectedTagId !== null) {
-        // Verify selected tag still exists
         const exists = stats.find((t) => t.id === selectedTagId);
         if (exists) {
           const txns = await TagRepository.getTransactionsByTag(selectedTagId);
@@ -87,20 +82,22 @@ export default function TagsScreen() {
   const totalTaggedSpend = tags.reduce((acc, t) => acc + t.total_amount, 0);
 
   return (
-    <SafeAreaView edges={['bottom', 'left', 'right']} className="flex-1 bg-gray-50">
-      {/* Top Bar: Action button + Horizontal Chips */}
-      <View className="bg-white border-b border-gray-100 pb-3 pt-2">
-        <View className="flex-row items-center justify-between px-4 mb-2.5">
-          <Text className="text-xs font-bold text-gray-500 uppercase tracking-wider">
+    <SafeAreaView edges={['bottom', 'left', 'right']} className="flex-1 bg-[#E8EBE6] dark:bg-[#121411]">
+      {/* Top Bar: Action button + Horizontal Chips - Wise Style */}
+      <View className="mx-4 mt-3 bg-white dark:bg-[#1B1E19] p-3 rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028]">
+        <View className="flex-row items-center justify-between mb-2 px-1">
+          <Text className="text-xs font-black text-[#5B5F5A] dark:text-[#A3A8A0] uppercase tracking-widest">
             {tags.length} {tags.length === 1 ? 'Tag' : 'Tags'}
           </Text>
           <TouchableOpacity
             activeOpacity={0.8}
             onPress={() => router.push('/tag/add' as any)}
-            className="flex-row items-center bg-emerald-700 px-3 py-1.5 rounded-full"
+            className="flex-row items-center bg-[#9FE870] px-3 py-1.5 rounded-full border border-[#86D454]"
           >
-            <Plus size={14} color="#FFFFFF" />
-            <Text className="text-white text-xs font-bold ml-1">New Tag</Text>
+            <Plus size={14} color="#0E0F0C" strokeWidth={3} />
+            <Text className="text-[#0E0F0C] text-xs font-black ml-1 uppercase tracking-wider">
+              New Tag
+            </Text>
           </TouchableOpacity>
         </View>
 
@@ -108,7 +105,7 @@ export default function TagsScreen() {
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          className="px-4 flex-row"
+          className="flex-row pt-1"
         >
           {/* "All" chip */}
           <TouchableOpacity
@@ -116,13 +113,15 @@ export default function TagsScreen() {
             onPress={() => handleSelectTag(null)}
             className={`mr-2 px-3.5 py-1.5 rounded-full border ${
               selectedTagId === null
-                ? 'bg-emerald-700 border-emerald-700'
-                : 'bg-gray-100 border-gray-200'
+                ? 'bg-[#9FE870] border-[#9FE870]'
+                : 'bg-[#F4F6F2] dark:bg-[#242921] border-[#D5D8CF] dark:border-[#2B3028]'
             }`}
           >
             <Text
-              className={`text-xs font-bold ${
-                selectedTagId === null ? 'text-white' : 'text-gray-700'
+              className={`text-xs ${
+                selectedTagId === null
+                  ? 'text-[#0E0F0C] font-black'
+                  : 'text-[#5B5F5A] dark:text-[#A3A8A0] font-bold'
               }`}
             >
               All Tags
@@ -149,7 +148,7 @@ export default function TagsScreen() {
                 />
                 <Text
                   style={{ color: isSelected ? '#FFFFFF' : tag.color }}
-                  className="text-xs font-bold"
+                  className="text-xs font-black"
                 >
                   {tag.name}
                 </Text>
@@ -161,17 +160,24 @@ export default function TagsScreen() {
 
       <ScrollView
         className="flex-1"
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        contentContainerStyle={{ paddingBottom: 60 }}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={['#0E0F0C', '#054D28']}
+          />
+        }
       >
         {/* VIEW 1: Specific Tag Selected */}
         {selectedTag && (
           <View className="p-4">
-            {/* Tag Header Detail Card */}
-            <View className="bg-white rounded-2xl p-4 mb-4 border border-gray-100 shadow-sm">
+            {/* Tag Header Detail Card - Wise Flat Card */}
+            <View className="bg-white dark:bg-[#1B1E19] rounded-2xl p-4 mb-4 border border-[#D5D8CF] dark:border-[#2B3028]">
               <View className="flex-row items-center justify-between mb-3">
                 <View className="flex-row items-center flex-1 mr-2">
                   <View
-                    style={{ backgroundColor: `${selectedTag.color}25` }}
+                    style={{ backgroundColor: `${selectedTag.color}20` }}
                     className="w-10 h-10 rounded-xl items-center justify-center mr-3"
                   >
                     <View
@@ -180,10 +186,13 @@ export default function TagsScreen() {
                     />
                   </View>
                   <View className="flex-1">
-                    <Text className="text-lg font-extrabold text-gray-900" numberOfLines={1}>
+                    <Text
+                      className="text-lg font-black text-[#0E0F0C] dark:text-[#F4F6F2]"
+                      numberOfLines={1}
+                    >
                       {selectedTag.name}
                     </Text>
-                    <Text className="text-xs text-gray-500">
+                    <Text className="text-xs font-medium text-[#5B5F5A] dark:text-[#A3A8A0]">
                       {tagTransactions.length} {tagTransactions.length === 1 ? 'transaction' : 'transactions'}
                     </Text>
                   </View>
@@ -193,18 +202,20 @@ export default function TagsScreen() {
                 <TouchableOpacity
                   activeOpacity={0.7}
                   onPress={() => router.push(`/tag/add?id=${selectedTag.id}` as any)}
-                  className="p-2 rounded-full bg-gray-100"
+                  className="p-2 rounded-xl bg-[#F4F6F2] dark:bg-[#242921]"
                 >
-                  <Edit2 size={16} color="#4B5563" />
+                  <Edit2 size={16} color="#0E0F0C" />
                 </TouchableOpacity>
               </View>
 
               {/* Optional Budget Progress Bar */}
               {selectedTag.budget_amount && selectedTag.budget_amount > 0 ? (
-                <View className="mt-2 pt-3 border-t border-gray-100">
+                <View className="mt-2 pt-3 border-t border-[#E8EBE6] dark:border-[#2B3028]">
                   <View className="flex-row items-center justify-between mb-1.5">
-                    <Text className="text-xs font-semibold text-gray-500">Budget Tracker</Text>
-                    <Text className="text-xs font-bold text-gray-700">
+                    <Text className="text-xs font-black text-[#5B5F5A] dark:text-[#A3A8A0] uppercase tracking-wider">
+                      Budget Tracker
+                    </Text>
+                    <Text className="text-xs font-black text-[#0E0F0C] dark:text-[#F4F6F2]">
                       {selectedTag.budget_progress ?? 0}%
                     </Text>
                   </View>
@@ -214,22 +225,22 @@ export default function TagsScreen() {
                   />
                   <View className="flex-row items-center justify-between mt-2">
                     <View>
-                      <Text className="text-[10px] text-gray-400">Total Spent</Text>
-                      <Text className="text-sm font-extrabold text-gray-900">
+                      <Text className="text-[10px] font-bold text-[#868685]">Total Spent</Text>
+                      <Text className="text-sm font-black text-[#0E0F0C] dark:text-[#F4F6F2]">
                         {formatCurrency(selectedTag.total_amount, currencySymbol, decimalPlaces)}
                       </Text>
                     </View>
                     <View className="items-end">
-                      <Text className="text-[10px] text-gray-400">Budget Limit</Text>
-                      <Text className="text-sm font-extrabold text-gray-900">
+                      <Text className="text-[10px] font-bold text-[#868685]">Budget Limit</Text>
+                      <Text className="text-sm font-black text-[#0E0F0C] dark:text-[#F4F6F2]">
                         {formatCurrency(selectedTag.budget_amount, currencySymbol, decimalPlaces)}
                       </Text>
                     </View>
                   </View>
                   {selectedTag.budget_amount - selectedTag.total_amount < 0 ? (
-                    <View className="flex-row items-center mt-2.5 bg-red-50 p-2 rounded-lg">
-                      <AlertTriangle size={14} color="#DC2626" />
-                      <Text className="text-xs text-red-700 font-semibold ml-1.5">
+                    <View className="flex-row items-center mt-2.5 bg-red-50 dark:bg-red-950/30 p-2.5 rounded-xl border border-red-200/50">
+                      <AlertTriangle size={14} color="#A7000D" />
+                      <Text className="text-xs text-[#A7000D] dark:text-[#F87171] font-bold ml-1.5">
                         Over budget by{' '}
                         {formatCurrency(
                           selectedTag.total_amount - selectedTag.budget_amount,
@@ -239,7 +250,7 @@ export default function TagsScreen() {
                       </Text>
                     </View>
                   ) : (
-                    <Text className="text-xs text-emerald-700 font-semibold mt-2">
+                    <Text className="text-xs text-[#054D28] dark:text-[#4ADE80] font-black mt-2">
                       {formatCurrency(
                         selectedTag.budget_amount - selectedTag.total_amount,
                         currencySymbol,
@@ -250,9 +261,9 @@ export default function TagsScreen() {
                   )}
                 </View>
               ) : (
-                <View className="mt-1 pt-2 border-t border-gray-50 flex-row items-center justify-between">
-                  <Text className="text-xs text-gray-400">Total Spent</Text>
-                  <Text className="text-base font-extrabold text-gray-900">
+                <View className="mt-1 pt-2.5 border-t border-[#E8EBE6] dark:border-[#2B3028] flex-row items-center justify-between">
+                  <Text className="text-xs font-bold text-[#5B5F5A] dark:text-[#A3A8A0]">Total Spent</Text>
+                  <Text className="text-base font-black text-[#0E0F0C] dark:text-[#F4F6F2]">
                     {formatCurrency(selectedTag.total_amount, currencySymbol, decimalPlaces)}
                   </Text>
                 </View>
@@ -260,12 +271,12 @@ export default function TagsScreen() {
             </View>
 
             {/* Transactions Header */}
-            <Text className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
+            <Text className="text-xs font-black uppercase tracking-widest text-[#0E0F0C] dark:text-[#F4F6F2] mb-2 px-1">
               Transactions ({tagTransactions.length})
             </Text>
 
             {/* List of Transactions */}
-            <View className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
+            <View className="bg-white dark:bg-[#1B1E19] rounded-2xl overflow-hidden border border-[#D5D8CF] dark:border-[#2B3028]">
               {tagTransactions.map((t) => (
                 <TransactionListItem
                   key={t.id}
@@ -277,7 +288,7 @@ export default function TagsScreen() {
 
               {tagTransactions.length === 0 && (
                 <View className="py-8 items-center">
-                  <Text className="text-sm text-gray-400">No transactions with this tag yet</Text>
+                  <Text className="text-xs text-[#868685] font-bold">No transactions with this tag yet</Text>
                 </View>
               )}
             </View>
@@ -287,16 +298,23 @@ export default function TagsScreen() {
         {/* VIEW 2: "All" Tags Overview */}
         {selectedTagId === null && (
           <View className="p-4">
-            {/* Top Overview Banner */}
-            <View className="bg-emerald-700 rounded-2xl p-4 mb-4 shadow-sm">
-              <Text className="text-white/80 text-xs font-semibold uppercase tracking-wider">
-                Total Tagged Spending
-              </Text>
-              <Text className="text-white text-2xl font-extrabold mt-0.5">
+            {/* Top Overview Banner - Wise Flat Card */}
+            <View className="bg-white dark:bg-[#1B1E19] rounded-2xl p-5 mb-4 border border-[#D5D8CF] dark:border-[#2B3028]">
+              <View className="flex-row items-center justify-between mb-1">
+                <Text className="text-xs font-black text-[#5B5F5A] dark:text-[#A3A8A0] uppercase tracking-widest">
+                  Total Tagged Spending
+                </Text>
+                <View className="bg-[#9FE870] px-2 py-0.5 rounded-full">
+                  <Text className="text-[10px] font-black uppercase tracking-wider text-[#0E0F0C]">
+                    {tags.length} Active
+                  </Text>
+                </View>
+              </View>
+              <Text className="text-3xl font-black text-[#0E0F0C] dark:text-[#F4F6F2] tracking-tight mt-0.5">
                 {formatCurrency(totalTaggedSpend, currencySymbol, decimalPlaces)}
               </Text>
-              <Text className="text-white/70 text-xs mt-1">
-                Across {tags.length} active tags
+              <Text className="text-xs font-medium text-[#5B5F5A] dark:text-[#A3A8A0] mt-1">
+                Aggregated cross-category tagged expenditure
               </Text>
             </View>
 
@@ -314,7 +332,7 @@ export default function TagsScreen() {
               <EmptyState
                 icon="Tag"
                 title="No Tags Created Yet"
-                subtitle="Tags help you group transactions across trips (e.g. LV Trip), stores (Costco), or family members (Me, Wife)."
+                subtitle="Tags help you group transactions across trips, stores, or family members."
                 actionLabel="+ Create First Tag"
                 onAction={() => router.push('/tag/add' as any)}
               />

@@ -9,10 +9,10 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { HardDrive, Download, Upload, ShieldAlert, CheckCircle } from 'lucide-react-native';
+import { HardDrive, Download, ShieldAlert, CheckCircle } from 'lucide-react-native';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
-import { closeDatabase, getDatabase } from '../../src/db/database';
+import { getDatabase } from '../../src/db/database';
 import { useSettingsStore } from '../../src/stores/settings.store';
 import { formatDateTime } from '../../src/utils/dates';
 
@@ -85,25 +85,25 @@ export default function LocalBackupScreen() {
   };
 
   return (
-    <SafeAreaView edges={['bottom', 'left', 'right']} className="flex-1 bg-gray-50">
+    <SafeAreaView edges={['bottom', 'left', 'right']} className="flex-1 bg-[#E8EBE6] dark:bg-[#121411]">
       <ScrollView className="flex-1 p-4">
-        {/* Info Card */}
-        <View className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm mb-4">
-          <View className="w-12 h-12 rounded-full bg-blue-50 items-center justify-center mb-3">
-            <HardDrive size={24} color="#1D4ED8" />
+        {/* Info Card - Wise Flat Card */}
+        <View className="bg-white dark:bg-[#1B1E19] p-5 rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028] mb-4">
+          <View className="w-12 h-12 rounded-xl bg-[#E8EBE6] dark:bg-[#242921] items-center justify-center mb-3">
+            <HardDrive size={24} color="#0E0F0C" />
           </View>
-          <Text className="text-base font-bold text-gray-900 mb-1">
+          <Text className="text-base font-black text-[#0E0F0C] dark:text-[#F4F6F2] mb-1">
             Local Device Database Backup
           </Text>
-          <Text className="text-xs text-gray-500 leading-relaxed">
+          <Text className="text-xs text-[#5B5F5A] dark:text-[#A3A8A0] leading-relaxed">
             Create an independent snapshot of your financial records. You can save this file to
             your phone's file manager, send it to another device, or store it offline.
           </Text>
 
           {lastLocalBackup && (
-            <View className="flex-row items-center mt-3 pt-3 border-t border-gray-100">
-              <CheckCircle size={14} color="#047857" className="mr-1.5" />
-              <Text className="text-xs text-gray-600 ml-1">
+            <View className="flex-row items-center mt-3 pt-3 border-t border-[#E8EBE6] dark:border-[#2B3028]">
+              <CheckCircle size={14} color="#054D28" className="mr-1.5" />
+              <Text className="text-xs font-bold text-[#054D28] dark:text-[#4ADE80] ml-1">
                 Last backup created: {formatDateTime(lastLocalBackup)}
               </Text>
             </View>
@@ -115,24 +115,28 @@ export default function LocalBackupScreen() {
           activeOpacity={0.85}
           onPress={handleExportBackup}
           disabled={loading}
-          className="w-full py-4 bg-emerald-700 rounded-xl items-center justify-center flex-row shadow-sm mb-4"
+          className="w-full py-4 bg-[#9FE870] rounded-full items-center justify-center flex-row border border-[#86D454] mb-4"
         >
           {loading ? (
-            <ActivityIndicator size="small" color="#FFFFFF" />
+            <ActivityIndicator size="small" color="#0E0F0C" />
           ) : (
             <>
-              <Download size={18} color="#FFFFFF" className="mr-2" />
-              <Text className="text-white text-sm font-bold">Export Backup File (.ikmm)</Text>
+              <Download size={18} color="#0E0F0C" strokeWidth={3} className="mr-2" />
+              <Text className="text-[#0E0F0C] text-xs font-black uppercase tracking-wider">
+                Export Backup File (.ikmm)
+              </Text>
             </>
           )}
         </TouchableOpacity>
 
         {/* Warning card */}
-        <View className="bg-amber-50 p-4 rounded-xl border border-amber-200 flex-row items-start">
-          <ShieldAlert size={20} color="#B45309" className="mr-3 mt-0.5" />
-          <View className="flex-1 ml-2">
-            <Text className="text-xs font-bold text-amber-900 mb-0.5">Offline Storage</Text>
-            <Text className="text-xs text-amber-800 leading-relaxed">
+        <View className="bg-white dark:bg-[#1B1E19] p-4 rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028] flex-row items-start">
+          <ShieldAlert size={20} color="#B86700" className="mr-3 mt-0.5" />
+          <View className="flex-1 ml-1">
+            <Text className="text-xs font-black text-[#0E0F0C] dark:text-[#F4F6F2] mb-0.5">
+              Offline Storage
+            </Text>
+            <Text className="text-xs text-[#5B5F5A] dark:text-[#A3A8A0] leading-relaxed">
               Local backups remain solely on this physical device. For cross-device protection or
               phone replacement, use the Google Drive Backup option.
             </Text>

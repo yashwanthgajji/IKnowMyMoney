@@ -4,12 +4,15 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { View, ActivityIndicator, Text } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { useColorScheme } from 'nativewind';
 import { getDatabase } from '../src/db/database';
 import { useSettingsStore } from '../src/stores/settings.store';
 
 export default function RootLayout() {
   const [isReady, setIsReady] = useState(false);
   const loadSettings = useSettingsStore((s) => s.loadSettings);
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === 'dark';
 
   useEffect(() => {
     async function init() {
@@ -38,13 +41,13 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider>
-      <StatusBar style="dark" />
+      <StatusBar style={isDark ? 'light' : 'dark'} />
       <Stack
         screenOptions={{
-          headerStyle: { backgroundColor: '#FFFFFF' },
-          headerTintColor: '#111827',
-          headerTitleStyle: { fontWeight: '700', fontSize: 18 },
-          contentStyle: { backgroundColor: '#F9FAFB' },
+          headerStyle: { backgroundColor: isDark ? '#1B1E19' : '#FFFFFF' },
+          headerTintColor: isDark ? '#F4F6F2' : '#0E0F0C',
+          headerTitleStyle: { fontWeight: '800', fontSize: 18, color: isDark ? '#F4F6F2' : '#0E0F0C' },
+          contentStyle: { backgroundColor: isDark ? '#121411' : '#E8EBE6' },
         }}
       >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />

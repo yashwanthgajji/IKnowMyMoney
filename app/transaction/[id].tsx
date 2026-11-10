@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Trash2, Check, ArrowRightLeft } from 'lucide-react-native';
+import { Trash2, Check } from 'lucide-react-native';
 import { TypeToggleTabs } from '../../src/components/ui/TypeToggleTabs';
 import { CategoryGrid } from '../../src/components/ui/CategoryGrid';
 import { NumericKeypad } from '../../src/components/ui/NumericKeypad';
@@ -22,7 +22,7 @@ import { TagPicker } from '../../src/components/ui/TagPicker';
 import { DateTimePickerField } from '../../src/components/ui/DateTimePickerField';
 import { useSettingsStore } from '../../src/stores/settings.store';
 import { Category, AccountWithBalance, TransactionType } from '../../src/types';
-import { parseAmountToCents, centsToInputValue } from '../../src/utils/money';
+import { parseAmountToCents } from '../../src/utils/money';
 
 export default function EditTransactionScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -68,15 +68,27 @@ export default function EditTransactionScreen() {
 
         const cats = await CategoryRepository.getByType(txn.type === 'income' ? 'income' : 'expense');
         setCategories(cats);
-
         setLoading(false);
       } catch (e) {
-        console.error('Failed to load transaction', e);
-        setLoading(false);
+        console.error('Failed to load transaction for edit', e);
+        Alert.alert('Error', 'Failed to load transaction data.');
+        router.back();
       }
     }
     loadData();
   }, [id]);
+
+  useEffect(() => {
+    async function refreshCategoriesOnTypeChange() {
+      if (loading) return;
+      const cats = await CategoryRepository.getByType(type === 'income' ? 'income' : 'expense');
+      setCategories(cats);
+      if (cats.length > 0 && !cats.some((c) => c.id === selectedCategoryId)) {
+        setSelectedCategoryId(cats[0].id);
+      }
+    }
+    refreshCategoriesOnTypeChange();
+  }, [type]);
 
   const handleKeyPress = (key: string) => {
     if (key === '.') {
@@ -112,12 +124,12 @@ export default function EditTransactionScreen() {
     }
 
     if (!selectedAccountId) {
-      Alert.alert('Account Required', 'Please select an account for this transaction.');
+      Alert.alert('Account Required', 'Please select an account.');
       return;
     }
 
     if (type !== 'transfer' && !selectedCategoryId) {
-      Alert.alert('Category Required', 'Please select a category for this transaction.');
+      Alert.alert('Category Required', 'Please select a category.');
       return;
     }
 
@@ -173,17 +185,21 @@ export default function EditTransactionScreen() {
 
   if (loading) {
     return (
-      <View className="flex-1 items-center justify-center bg-white">
-        <ActivityIndicator size="large" color="#047857" />
+      <View className="flex-1 items-center justify-center bg-[#E8EBE6] dark:bg-[#121411]">
+        <ActivityIndicator size="large" color="#0E0F0C" />
       </View>
     );
   }
 
   const amountColor =
-    type === 'income' ? 'text-emerald-700' : type === 'transfer' ? 'text-blue-700' : 'text-red-700';
+    type === 'income'
+      ? 'text-[#054D28] dark:text-[#4ADE80]'
+      : type === 'transfer'
+      ? 'text-[#1D4ED8] dark:text-[#60A5FA]'
+      : 'text-[#A7000D] dark:text-[#F87171]';
 
   return (
-    <SafeAreaView edges={['bottom', 'left', 'right']} className="flex-1 bg-white">
+    <SafeAreaView edges={['bottom', 'left', 'right']} className="flex-1 bg-[#E8EBE6] dark:bg-[#121411]">
       <ScrollView
         className="flex-1"
         keyboardShouldPersistTaps="handled"
@@ -194,30 +210,30 @@ export default function EditTransactionScreen() {
           <TypeToggleTabs selectedType={type} onSelectType={setType} />
         </View>
 
-        {/* Amount Display */}
+        {/* Amount Display - Wise Flat Card */}
         <TouchableOpacity
           activeOpacity={0.9}
           onPress={() => setShowKeypad(!showKeypad)}
-          className="items-center justify-center py-4 px-6 bg-gray-50 mx-4 rounded-2xl border border-gray-100"
+          className="items-center justify-center py-5 px-6 bg-white dark:bg-[#1B1E19] mx-4 rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028]"
         >
-          <Text className="text-xs uppercase text-gray-400 font-semibold mb-1">
+          <Text className="text-xs uppercase text-[#5B5F5A] dark:text-[#A3A8A0] font-black tracking-widest mb-1">
             Amount (Tap to edit)
           </Text>
-          <Text className={`text-4xl font-extrabold ${amountColor}`}>
+          <Text className={`text-4xl font-black tracking-tight ${amountColor}`}>
             {currencySymbol} {amountStr}
           </Text>
         </TouchableOpacity>
 
         {/* Keypad toggleable */}
         {showKeypad && (
-          <View className="mt-3 bg-white border-b border-gray-100 pb-2">
+          <View className="mt-3 pt-2">
             <NumericKeypad onKeyPress={handleKeyPress} onDelete={handleDeleteKeyPress} />
           </View>
         )}
 
         {/* Account Selector */}
-        <View className="px-4 mt-4">
-          <Text className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+        <View className="px-4 mt-3">
+          <Text className="text-xs font-black text-[#5B5F5A] dark:text-[#A3A8A0] uppercase tracking-widest mb-2">
             {type === 'transfer' ? 'Transfer From Account' : 'Account'}
           </Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row">
@@ -226,14 +242,19 @@ export default function EditTransactionScreen() {
               return (
                 <TouchableOpacity
                   key={acc.id}
+                  activeOpacity={0.7}
                   onPress={() => setSelectedAccountId(acc.id)}
-                  className={`mr-2 px-3.5 py-2 rounded-xl flex-row items-center border ${
-                    isSelected ? 'bg-emerald-700 border-emerald-700' : 'bg-white border-gray-200'
+                  className={`mr-2 px-3.5 py-2 rounded-full flex-row items-center border ${
+                    isSelected
+                      ? 'bg-[#9FE870] border-[#9FE870]'
+                      : 'bg-white dark:bg-[#1B1E19] border-[#D5D8CF] dark:border-[#2B3028]'
                   }`}
                 >
                   <Text
-                    className={`text-xs font-semibold ${
-                      isSelected ? 'text-white' : 'text-gray-700'
+                    className={`text-xs ${
+                      isSelected
+                        ? 'text-[#0E0F0C] font-black'
+                        : 'text-[#5B5F5A] dark:text-[#A3A8A0] font-bold'
                     }`}
                   >
                     {acc.name}
@@ -246,8 +267,8 @@ export default function EditTransactionScreen() {
 
         {/* Destination Account for Transfers */}
         {type === 'transfer' && (
-          <View className="px-4 mt-4">
-            <Text className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+          <View className="px-4 mt-3">
+            <Text className="text-xs font-black text-[#5B5F5A] dark:text-[#A3A8A0] uppercase tracking-widest mb-2">
               Transfer To Account
             </Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row">
@@ -256,14 +277,19 @@ export default function EditTransactionScreen() {
                 return (
                   <TouchableOpacity
                     key={acc.id}
+                    activeOpacity={0.7}
                     onPress={() => setSelectedToAccountId(acc.id)}
-                    className={`mr-2 px-3.5 py-2 rounded-xl flex-row items-center border ${
-                      isSelected ? 'bg-blue-700 border-blue-700' : 'bg-white border-gray-200'
+                    className={`mr-2 px-3.5 py-2 rounded-full flex-row items-center border ${
+                      isSelected
+                        ? 'bg-[#1D4ED8] border-[#1D4ED8]'
+                        : 'bg-white dark:bg-[#1B1E19] border-[#D5D8CF] dark:border-[#2B3028]'
                     }`}
                   >
                     <Text
-                      className={`text-xs font-semibold ${
-                        isSelected ? 'text-white' : 'text-gray-700'
+                      className={`text-xs ${
+                        isSelected
+                          ? 'text-white font-black'
+                          : 'text-[#5B5F5A] dark:text-[#A3A8A0] font-bold'
                       }`}
                     >
                       {acc.name}
@@ -277,8 +303,8 @@ export default function EditTransactionScreen() {
 
         {/* Category Grid */}
         {type !== 'transfer' && (
-          <View className="px-4 mt-4">
-            <Text className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+          <View className="px-4 mt-3">
+            <Text className="text-xs font-black text-[#5B5F5A] dark:text-[#A3A8A0] uppercase tracking-widest mb-2">
               Category
             </Text>
             <CategoryGrid
@@ -293,20 +319,20 @@ export default function EditTransactionScreen() {
         <DateTimePickerField date={date} onChangeDate={setDate} />
 
         {/* Note input (Multi-line) */}
-        <View className="px-4 mt-4">
-          <Text className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+        <View className="px-4 mt-3">
+          <Text className="text-xs font-black text-[#5B5F5A] dark:text-[#A3A8A0] uppercase tracking-widest mb-1.5">
             Note / Description
           </Text>
           <TextInput
             value={note}
             onChangeText={setNote}
             placeholder="Add a note"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor="#868685"
             multiline
-            numberOfLines={3}
-            style={{ minHeight: 72, textAlignVertical: 'top' }}
+            numberOfLines={2}
+            style={{ minHeight: 64, textAlignVertical: 'top' }}
             blurOnSubmit={false}
-            className="bg-gray-50 rounded-xl px-4 py-3 border border-gray-200 text-sm text-gray-800"
+            className="bg-white dark:bg-[#1B1E19] rounded-2xl px-4 py-3 border border-[#D5D8CF] dark:border-[#2B3028] text-xs font-bold text-[#0E0F0C] dark:text-[#F4F6F2]"
           />
         </View>
 
@@ -316,24 +342,24 @@ export default function EditTransactionScreen() {
           onTagsChange={setSelectedTagIds}
         />
 
-        {/* Action Buttons */}
-        <View className="p-4 mt-6 gap-3">
+        {/* Action Buttons - Wise Style */}
+        <View className="p-4 mt-4 gap-2.5">
           <TouchableOpacity
             activeOpacity={0.85}
             onPress={handleSave}
-            className="w-full py-3.5 bg-emerald-700 rounded-xl items-center justify-center flex-row shadow-sm"
+            className="w-full py-4 bg-[#9FE870] rounded-full items-center justify-center flex-row border border-[#86D454]"
           >
-            <Check size={18} color="#FFFFFF" className="mr-2" />
-            <Text className="text-white text-sm font-bold">Save Changes</Text>
+            <Check size={18} color="#0E0F0C" strokeWidth={3} className="mr-2" />
+            <Text className="text-[#0E0F0C] text-xs font-black uppercase tracking-wider">Save Changes</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             activeOpacity={0.85}
             onPress={handleDelete}
-            className="w-full py-3.5 bg-red-50 border border-red-200 rounded-xl items-center justify-center flex-row"
+            className="w-full py-3.5 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 rounded-full items-center justify-center flex-row"
           >
-            <Trash2 size={18} color="#B91C1C" className="mr-2" />
-            <Text className="text-red-700 text-sm font-bold">Delete Transaction</Text>
+            <Trash2 size={16} color="#A7000D" className="mr-2" />
+            <Text className="text-[#A7000D] dark:text-[#F87171] text-xs font-black uppercase tracking-wider">Delete Record</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

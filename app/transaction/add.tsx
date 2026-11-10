@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { X, Check, Calendar, ArrowRightLeft } from 'lucide-react-native';
+import { X, Check } from 'lucide-react-native';
 import { TypeToggleTabs } from '../../src/components/ui/TypeToggleTabs';
 import { CategoryGrid } from '../../src/components/ui/CategoryGrid';
 import { NumericKeypad } from '../../src/components/ui/NumericKeypad';
@@ -71,7 +71,6 @@ export default function AddTransactionScreen() {
     if (amountStr === '0') {
       setAmountStr(key);
     } else {
-      // Limit to 2 decimal places
       const parts = amountStr.split('.');
       if (parts.length === 2 && parts[1].length >= 2) return;
       setAmountStr(amountStr + key);
@@ -133,24 +132,33 @@ export default function AddTransactionScreen() {
   };
 
   const amountColor =
-    type === 'income' ? 'text-emerald-700' : type === 'transfer' ? 'text-blue-700' : 'text-red-700';
+    type === 'income'
+      ? 'text-[#054D28] dark:text-[#4ADE80]'
+      : type === 'transfer'
+      ? 'text-[#1D4ED8] dark:text-[#60A5FA]'
+      : 'text-[#A7000D] dark:text-[#F87171]';
 
   return (
-    <SafeAreaView edges={['top', 'bottom', 'left', 'right']} className="flex-1 bg-white">
-      {/* Header bar */}
-      <View className="flex-row items-center justify-between px-4 py-3 border-b border-gray-100">
+    <SafeAreaView edges={['top', 'bottom', 'left', 'right']} className="flex-1 bg-[#E8EBE6] dark:bg-[#121411]">
+      {/* Header bar - Wise Style */}
+      <View className="flex-row items-center justify-between px-4 py-3 bg-white dark:bg-[#1B1E19] border-b border-[#D5D8CF] dark:border-[#2B3028]">
         <TouchableOpacity
+          activeOpacity={0.7}
           onPress={() => router.back()}
-          className="w-10 h-10 items-center justify-center rounded-full bg-gray-50"
+          className="w-9 h-9 items-center justify-center rounded-full bg-[#F4F6F2] dark:bg-[#242921]"
         >
-          <X size={20} color="#374151" />
+          <X size={18} color="#0E0F0C" />
         </TouchableOpacity>
-        <Text className="text-base font-bold text-gray-900">Add Transaction</Text>
+        <Text className="text-xs font-black uppercase tracking-widest text-[#0E0F0C] dark:text-[#F4F6F2]">
+          Add Transaction
+        </Text>
         <TouchableOpacity
+          activeOpacity={0.8}
           onPress={handleSave}
-          className="w-10 h-10 items-center justify-center rounded-full bg-emerald-700"
+          className="bg-[#9FE870] px-3.5 py-1.5 rounded-full border border-[#86D454] flex-row items-center"
         >
-          <Check size={20} color="#FFFFFF" />
+          <Check size={16} color="#0E0F0C" strokeWidth={3} />
+          <Text className="text-[#0E0F0C] text-xs font-black ml-1 uppercase">Save</Text>
         </TouchableOpacity>
       </View>
 
@@ -164,21 +172,23 @@ export default function AddTransactionScreen() {
           <TypeToggleTabs selectedType={type} onSelectType={setType} />
         </View>
 
-        {/* Big Amount Display */}
+        {/* Big Amount Display - Wise Flat Card */}
         <TouchableOpacity
           activeOpacity={0.9}
           onPress={() => setShowKeypad(true)}
-          className="items-center justify-center py-4 px-6 bg-gray-50 mx-4 rounded-2xl border border-gray-100"
+          className="items-center justify-center py-5 px-6 bg-white dark:bg-[#1B1E19] mx-4 rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028]"
         >
-          <Text className="text-xs uppercase text-gray-400 font-semibold mb-1">Amount</Text>
-          <Text className={`text-4xl font-extrabold ${amountColor}`}>
+          <Text className="text-xs uppercase text-[#5B5F5A] dark:text-[#A3A8A0] font-black tracking-widest mb-1">
+            Amount
+          </Text>
+          <Text className={`text-4xl font-black tracking-tight ${amountColor}`}>
             {currencySymbol} {amountStr}
           </Text>
         </TouchableOpacity>
 
         {/* Account Selector */}
-        <View className="px-4 mt-4">
-          <Text className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+        <View className="px-4 mt-3">
+          <Text className="text-xs font-black text-[#5B5F5A] dark:text-[#A3A8A0] uppercase tracking-widest mb-2">
             {type === 'transfer' ? 'Transfer From Account' : 'Account'}
           </Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row">
@@ -187,16 +197,19 @@ export default function AddTransactionScreen() {
               return (
                 <TouchableOpacity
                   key={acc.id}
+                  activeOpacity={0.7}
                   onPress={() => setSelectedAccountId(acc.id)}
-                  className={`mr-2 px-3.5 py-2 rounded-xl flex-row items-center border ${
+                  className={`mr-2 px-3.5 py-2 rounded-full flex-row items-center border ${
                     isSelected
-                      ? 'bg-emerald-700 border-emerald-700'
-                      : 'bg-white border-gray-200'
+                      ? 'bg-[#9FE870] border-[#9FE870]'
+                      : 'bg-white dark:bg-[#1B1E19] border-[#D5D8CF] dark:border-[#2B3028]'
                   }`}
                 >
                   <Text
-                    className={`text-xs font-semibold ${
-                      isSelected ? 'text-white' : 'text-gray-700'
+                    className={`text-xs ${
+                      isSelected
+                        ? 'text-[#0E0F0C] font-black'
+                        : 'text-[#5B5F5A] dark:text-[#A3A8A0] font-bold'
                     }`}
                   >
                     {acc.name}
@@ -209,8 +222,8 @@ export default function AddTransactionScreen() {
 
         {/* Destination Account for Transfers */}
         {type === 'transfer' && (
-          <View className="px-4 mt-4">
-            <Text className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+          <View className="px-4 mt-3">
+            <Text className="text-xs font-black text-[#5B5F5A] dark:text-[#A3A8A0] uppercase tracking-widest mb-2">
               Transfer To Account
             </Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row">
@@ -219,14 +232,19 @@ export default function AddTransactionScreen() {
                 return (
                   <TouchableOpacity
                     key={acc.id}
+                    activeOpacity={0.7}
                     onPress={() => setSelectedToAccountId(acc.id)}
-                    className={`mr-2 px-3.5 py-2 rounded-xl flex-row items-center border ${
-                      isSelected ? 'bg-blue-700 border-blue-700' : 'bg-white border-gray-200'
+                    className={`mr-2 px-3.5 py-2 rounded-full flex-row items-center border ${
+                      isSelected
+                        ? 'bg-[#1D4ED8] border-[#1D4ED8]'
+                        : 'bg-white dark:bg-[#1B1E19] border-[#D5D8CF] dark:border-[#2B3028]'
                     }`}
                   >
                     <Text
-                      className={`text-xs font-semibold ${
-                        isSelected ? 'text-white' : 'text-gray-700'
+                      className={`text-xs ${
+                        isSelected
+                          ? 'text-white font-black'
+                          : 'text-[#5B5F5A] dark:text-[#A3A8A0] font-bold'
                       }`}
                     >
                       {acc.name}
@@ -240,8 +258,8 @@ export default function AddTransactionScreen() {
 
         {/* Category Grid (Expense / Income only) */}
         {type !== 'transfer' && (
-          <View className="px-4 mt-4">
-            <Text className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+          <View className="px-4 mt-3">
+            <Text className="text-xs font-black text-[#5B5F5A] dark:text-[#A3A8A0] uppercase tracking-widest mb-2">
               Select Category
             </Text>
             <CategoryGrid
@@ -256,20 +274,20 @@ export default function AddTransactionScreen() {
         <DateTimePickerField date={date} onChangeDate={setDate} />
 
         {/* Optional Note Field (Multi-line) */}
-        <View className="px-4 mt-4">
-          <Text className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+        <View className="px-4 mt-3">
+          <Text className="text-xs font-black text-[#5B5F5A] dark:text-[#A3A8A0] uppercase tracking-widest mb-1.5">
             Note / Description
           </Text>
           <TextInput
             value={note}
             onChangeText={setNote}
             placeholder="Add an optional note (e.g., Grocery store)"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor="#868685"
             multiline
-            numberOfLines={3}
-            style={{ minHeight: 72, textAlignVertical: 'top' }}
+            numberOfLines={2}
+            style={{ minHeight: 64, textAlignVertical: 'top' }}
             blurOnSubmit={false}
-            className="bg-gray-50 rounded-xl px-4 py-3 border border-gray-200 text-sm text-gray-800"
+            className="bg-white dark:bg-[#1B1E19] rounded-2xl px-4 py-3 border border-[#D5D8CF] dark:border-[#2B3028] text-xs font-bold text-[#0E0F0C] dark:text-[#F4F6F2]"
           />
         </View>
 
@@ -281,7 +299,7 @@ export default function AddTransactionScreen() {
 
         {/* Keypad */}
         {showKeypad && (
-          <View className="mt-4 pb-4 bg-white border-t border-gray-100 pt-2">
+          <View className="mt-4 pb-4 pt-2">
             <NumericKeypad onKeyPress={handleKeyPress} onDelete={handleDelete} />
           </View>
         )}

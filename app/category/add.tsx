@@ -23,7 +23,7 @@ export default function AddCategoryScreen() {
   );
   const [name, setName] = useState('');
   const [selectedIcon, setSelectedIcon] = useState('Tag');
-  const [selectedColor, setSelectedColor] = useState('#047857');
+  const [selectedColor, setSelectedColor] = useState('#054D28');
 
   const icons = [
     'Tag', 'Utensils', 'Car', 'ShoppingBag', 'Receipt', 'Film',
@@ -32,8 +32,8 @@ export default function AddCategoryScreen() {
   ];
 
   const colors = [
-    '#047857', '#1D4ED8', '#B91C1C', '#D97706',
-    '#7C3AED', '#DB2777', '#0891B2', '#4B5563'
+    '#054D28', '#1D4ED8', '#A7000D', '#B86700',
+    '#7C3AED', '#DB2777', '#0891B2', '#0E0F0C'
   ];
 
   const handleSave = async () => {
@@ -60,64 +60,81 @@ export default function AddCategoryScreen() {
   };
 
   return (
-    <SafeAreaView edges={['bottom', 'left', 'right']} className="flex-1 bg-white">
+    <SafeAreaView edges={['bottom', 'left', 'right']} className="flex-1 bg-[#E8EBE6] dark:bg-[#121411]">
       <ScrollView className="flex-1 p-4" keyboardShouldPersistTaps="handled">
-        {/* Type Toggle */}
-        <View className="flex-row mb-4 bg-gray-100 p-1 rounded-xl">
+        {/* Type Toggle - Wise Segmented Pills */}
+        <View className="mb-4 bg-white dark:bg-[#1B1E19] p-1.5 rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028] flex-row gap-1.5">
           <TouchableOpacity
+            activeOpacity={0.8}
             onPress={() => setType('expense')}
-            className={`flex-1 py-2.5 rounded-lg items-center ${
-              type === 'expense' ? 'bg-red-700' : 'bg-transparent'
+            className={`flex-1 py-2.5 rounded-xl items-center ${
+              type === 'expense' ? 'bg-[#A7000D]' : 'bg-transparent'
             }`}
           >
-            <Text className={`text-xs font-bold ${type === 'expense' ? 'text-white' : 'text-gray-600'}`}>
+            <Text
+              className={`text-xs ${
+                type === 'expense'
+                  ? 'font-black text-white'
+                  : 'font-bold text-[#5B5F5A] dark:text-[#A3A8A0]'
+              }`}
+            >
               Expense
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
+            activeOpacity={0.8}
             onPress={() => setType('income')}
-            className={`flex-1 py-2.5 rounded-lg items-center ${
-              type === 'income' ? 'bg-emerald-700' : 'bg-transparent'
+            className={`flex-1 py-2.5 rounded-xl items-center ${
+              type === 'income' ? 'bg-[#054D28]' : 'bg-transparent'
             }`}
           >
-            <Text className={`text-xs font-bold ${type === 'income' ? 'text-white' : 'text-gray-600'}`}>
+            <Text
+              className={`text-xs ${
+                type === 'income'
+                  ? 'font-black text-white'
+                  : 'font-bold text-[#5B5F5A] dark:text-[#A3A8A0]'
+              }`}
+            >
               Income
             </Text>
           </TouchableOpacity>
         </View>
 
         {/* Name input */}
-        <View className="mb-4">
-          <Text className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+        <View className="mb-4 bg-white dark:bg-[#1B1E19] p-4 rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028]">
+          <Text className="text-xs font-black text-[#5B5F5A] dark:text-[#A3A8A0] uppercase tracking-widest mb-1.5">
             Category Name
           </Text>
           <TextInput
             value={name}
             onChangeText={setName}
             placeholder="e.g. Subscriptions, Coffee, Pet Care"
-            placeholderTextColor="#9CA3AF"
-            className="bg-gray-50 rounded-xl px-4 py-3 border border-gray-200 text-sm text-gray-900"
+            placeholderTextColor="#868685"
+            className="bg-[#F4F6F2] dark:bg-[#242921] rounded-xl px-4 py-3 border border-[#D5D8CF] dark:border-[#2B3028] text-xs font-bold text-[#0E0F0C] dark:text-[#F4F6F2]"
           />
         </View>
 
         {/* Icon Picker */}
-        <View className="mb-4">
-          <Text className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+        <View className="mb-4 bg-white dark:bg-[#1B1E19] p-4 rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028]">
+          <Text className="text-xs font-black text-[#5B5F5A] dark:text-[#A3A8A0] uppercase tracking-widest mb-2">
             Choose Icon
           </Text>
-          <View className="flex-row flex-wrap gap-3">
+          <View className="flex-row flex-wrap gap-2.5">
             {icons.map((ic) => {
               const isSelected = selectedIcon === ic;
               return (
                 <TouchableOpacity
                   key={ic}
+                  activeOpacity={0.7}
                   onPress={() => setSelectedIcon(ic)}
-                  className={`w-12 h-12 rounded-xl items-center justify-center border ${
-                    isSelected ? 'border-2 border-emerald-700 bg-emerald-50' : 'border-gray-200 bg-gray-50'
+                  className={`w-11 h-11 rounded-xl items-center justify-center border ${
+                    isSelected
+                      ? 'border-2 border-[#0E0F0C] dark:border-[#F4F6F2] bg-[#E8EBE6] dark:bg-[#242921]'
+                      : 'border-[#D5D8CF] dark:border-[#2B3028] bg-[#F4F6F2] dark:bg-[#242921]'
                   }`}
                 >
-                  <DynamicIcon name={ic} size={22} color={isSelected ? '#047857' : '#4B5563'} />
+                  <DynamicIcon name={ic} size={20} color={isSelected ? '#0E0F0C' : '#5B5F5A'} />
                 </TouchableOpacity>
               );
             })}
@@ -125,22 +142,23 @@ export default function AddCategoryScreen() {
         </View>
 
         {/* Color Picker */}
-        <View className="mb-6">
-          <Text className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+        <View className="mb-6 bg-white dark:bg-[#1B1E19] p-4 rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028]">
+          <Text className="text-xs font-black text-[#5B5F5A] dark:text-[#A3A8A0] uppercase tracking-widest mb-2">
             Choose Color
           </Text>
-          <View className="flex-row flex-wrap gap-3">
+          <View className="flex-row flex-wrap gap-2.5">
             {colors.map((c) => {
               const isSelected = selectedColor === c;
               return (
                 <TouchableOpacity
                   key={c}
+                  activeOpacity={0.7}
                   onPress={() => setSelectedColor(c)}
                   className="w-10 h-10 rounded-full items-center justify-center"
                   style={{
                     backgroundColor: c,
                     borderWidth: isSelected ? 3 : 0,
-                    borderColor: '#111827',
+                    borderColor: '#0E0F0C',
                   }}
                 >
                   {isSelected && <Check size={16} color="#FFFFFF" />}
@@ -154,10 +172,10 @@ export default function AddCategoryScreen() {
         <TouchableOpacity
           activeOpacity={0.85}
           onPress={handleSave}
-          className="w-full py-4 bg-emerald-700 rounded-xl items-center justify-center flex-row shadow-sm mb-6"
+          className="w-full py-4 bg-[#9FE870] rounded-full items-center justify-center flex-row border border-[#86D454] mb-8"
         >
-          <Check size={18} color="#FFFFFF" className="mr-2" />
-          <Text className="text-white text-sm font-bold">Create Category</Text>
+          <Check size={18} color="#0E0F0C" strokeWidth={3} className="mr-2" />
+          <Text className="text-[#0E0F0C] text-xs font-black uppercase tracking-wider">Create Category</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>

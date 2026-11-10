@@ -18,23 +18,25 @@ export function EmptyState({
   onAction,
 }: EmptyStateProps) {
   return (
-    <View className="items-center justify-center p-8 my-8">
-      <View className="w-16 h-16 rounded-full bg-gray-100 items-center justify-center mb-4">
-        <DynamicIcon name={icon} size={32} color="#9CA3AF" />
+    <View className="items-center justify-center p-8 my-6">
+      <View className="w-16 h-16 rounded-2xl bg-white dark:bg-[#1B1E19] border border-[#D5D8CF] dark:border-[#2B3028] items-center justify-center mb-4">
+        <DynamicIcon name={icon} size={28} color="#5B5F5A" />
       </View>
-      <Text className="text-base font-bold text-gray-800 text-center mb-1">
+      <Text className="text-base font-black text-[#0E0F0C] dark:text-[#F4F6F2] text-center mb-1">
         {title}
       </Text>
-      <Text className="text-xs text-gray-500 text-center leading-relaxed px-4">
+      <Text className="text-xs text-[#5B5F5A] dark:text-[#A3A8A0] text-center leading-relaxed px-4">
         {subtitle}
       </Text>
       {actionLabel && onAction && (
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={onAction}
-          className="mt-5 px-5 py-2.5 bg-emerald-700 rounded-xl"
+          className="mt-5 px-6 py-3 bg-[#9FE870] rounded-full border border-[#86D454] active:bg-[#86D454]"
         >
-          <Text className="text-white text-xs font-semibold">{actionLabel}</Text>
+          <Text className="text-[#0E0F0C] text-xs font-black uppercase tracking-wider">
+            {actionLabel}
+          </Text>
         </TouchableOpacity>
       )}
     </View>

@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { Check, X } from 'lucide-react-native';
+import { Check } from 'lucide-react-native';
 import { AccountRepository } from '../../src/repositories/account.repository';
 import { useSettingsStore } from '../../src/stores/settings.store';
 import { AccountType } from '../../src/types';
@@ -26,7 +26,7 @@ export default function AddAccountScreen() {
   const [initialBalanceStr, setInitialBalanceStr] = useState('0');
   const [isAsset, setIsAsset] = useState(true);
   const [selectedIcon, setSelectedIcon] = useState('Wallet');
-  const [selectedColor, setSelectedColor] = useState('#047857');
+  const [selectedColor, setSelectedColor] = useState('#054D28');
 
   const accountTypes: { type: AccountType; label: string }[] = [
     { type: 'wallet', label: 'Cash / Wallet' },
@@ -38,7 +38,7 @@ export default function AddAccountScreen() {
   ];
 
   const icons = ['Wallet', 'Landmark', 'CreditCard', 'PiggyBank', 'Banknote', 'Coins', 'TrendingUp', 'Briefcase'];
-  const colors = ['#047857', '#1D4ED8', '#B91C1C', '#D97706', '#7C3AED', '#DB2777', '#0891B2', '#4B5563'];
+  const colors = ['#054D28', '#1D4ED8', '#A7000D', '#B86700', '#7C3AED', '#DB2777', '#0891B2', '#0E0F0C'];
 
   const handleSave = async () => {
     if (!name.trim()) {
@@ -66,25 +66,25 @@ export default function AddAccountScreen() {
   };
 
   return (
-    <SafeAreaView edges={['bottom', 'left', 'right']} className="flex-1 bg-white">
+    <SafeAreaView edges={['bottom', 'left', 'right']} className="flex-1 bg-[#E8EBE6] dark:bg-[#121411]">
       <ScrollView className="flex-1 p-4" keyboardShouldPersistTaps="handled">
         {/* Name input */}
-        <View className="mb-4">
-          <Text className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+        <View className="mb-4 bg-white dark:bg-[#1B1E19] p-4 rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028]">
+          <Text className="text-xs font-black text-[#5B5F5A] dark:text-[#A3A8A0] uppercase tracking-widest mb-1.5">
             Account Name
           </Text>
           <TextInput
             value={name}
             onChangeText={setName}
             placeholder="e.g. Chase Checking, Cash Wallet"
-            placeholderTextColor="#9CA3AF"
-            className="bg-gray-50 rounded-xl px-4 py-3 border border-gray-200 text-sm text-gray-900"
+            placeholderTextColor="#868685"
+            className="bg-[#F4F6F2] dark:bg-[#242921] rounded-xl px-4 py-3 border border-[#D5D8CF] dark:border-[#2B3028] text-xs font-bold text-[#0E0F0C] dark:text-[#F4F6F2]"
           />
         </View>
 
         {/* Initial Balance */}
-        <View className="mb-4">
-          <Text className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+        <View className="mb-4 bg-white dark:bg-[#1B1E19] p-4 rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028]">
+          <Text className="text-xs font-black text-[#5B5F5A] dark:text-[#A3A8A0] uppercase tracking-widest mb-1.5">
             Initial Balance ({currencySymbol})
           </Text>
           <TextInput
@@ -92,14 +92,14 @@ export default function AddAccountScreen() {
             onChangeText={setInitialBalanceStr}
             keyboardType="decimal-pad"
             placeholder="0.00"
-            placeholderTextColor="#9CA3AF"
-            className="bg-gray-50 rounded-xl px-4 py-3 border border-gray-200 text-sm text-gray-900"
+            placeholderTextColor="#868685"
+            className="bg-[#F4F6F2] dark:bg-[#242921] rounded-xl px-4 py-3 border border-[#D5D8CF] dark:border-[#2B3028] text-sm font-black text-[#0E0F0C] dark:text-[#F4F6F2]"
           />
         </View>
 
         {/* Account Type */}
-        <View className="mb-4">
-          <Text className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+        <View className="mb-4 bg-white dark:bg-[#1B1E19] p-4 rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028]">
+          <Text className="text-xs font-black text-[#5B5F5A] dark:text-[#A3A8A0] uppercase tracking-widest mb-2">
             Account Type
           </Text>
           <View className="flex-row flex-wrap gap-2">
@@ -108,6 +108,7 @@ export default function AddAccountScreen() {
               return (
                 <TouchableOpacity
                   key={t.type}
+                  activeOpacity={0.7}
                   onPress={() => {
                     setType(t.type);
                     if (t.type === 'card' || t.type === 'loan') {
@@ -116,11 +117,19 @@ export default function AddAccountScreen() {
                       setIsAsset(true);
                     }
                   }}
-                  className={`px-3 py-2 rounded-xl border ${
-                    isSelected ? 'bg-emerald-700 border-emerald-700' : 'bg-gray-50 border-gray-200'
+                  className={`px-3 py-2 rounded-full border ${
+                    isSelected
+                      ? 'bg-[#9FE870] border-[#9FE870]'
+                      : 'bg-[#F4F6F2] dark:bg-[#242921] border-[#D5D8CF] dark:border-[#2B3028]'
                   }`}
                 >
-                  <Text className={`text-xs font-semibold ${isSelected ? 'text-white' : 'text-gray-700'}`}>
+                  <Text
+                    className={`text-xs ${
+                      isSelected
+                        ? 'text-[#0E0F0C] font-black'
+                        : 'text-[#5B5F5A] dark:text-[#A3A8A0] font-bold'
+                    }`}
+                  >
                     {t.label}
                   </Text>
                 </TouchableOpacity>
@@ -130,38 +139,41 @@ export default function AddAccountScreen() {
         </View>
 
         {/* Is Asset Switch */}
-        <View className="flex-row items-center justify-between py-3 px-4 bg-gray-50 rounded-xl border border-gray-200 mb-4">
+        <View className="flex-row items-center justify-between p-4 bg-white dark:bg-[#1B1E19] rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028] mb-4">
           <View>
-            <Text className="text-sm font-bold text-gray-900">Include as Asset</Text>
-            <Text className="text-xs text-gray-500">
+            <Text className="text-sm font-black text-[#0E0F0C] dark:text-[#F4F6F2]">Include as Asset</Text>
+            <Text className="text-xs text-[#5B5F5A] dark:text-[#A3A8A0] font-medium">
               {isAsset ? 'Adds to your Net Worth' : 'Counts as Debt/Liability'}
             </Text>
           </View>
           <Switch
             value={isAsset}
             onValueChange={setIsAsset}
-            trackColor={{ false: '#D1D5DB', true: '#047857' }}
-            thumbColor="#FFFFFF"
+            trackColor={{ false: '#D5D8CF', true: '#9FE870' }}
+            thumbColor="#0E0F0C"
           />
         </View>
 
         {/* Icon Picker */}
-        <View className="mb-4">
-          <Text className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+        <View className="mb-4 bg-white dark:bg-[#1B1E19] p-4 rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028]">
+          <Text className="text-xs font-black text-[#5B5F5A] dark:text-[#A3A8A0] uppercase tracking-widest mb-2">
             Choose Icon
           </Text>
-          <View className="flex-row flex-wrap gap-3">
+          <View className="flex-row flex-wrap gap-2.5">
             {icons.map((ic) => {
               const isSelected = selectedIcon === ic;
               return (
                 <TouchableOpacity
                   key={ic}
+                  activeOpacity={0.7}
                   onPress={() => setSelectedIcon(ic)}
-                  className={`w-12 h-12 rounded-xl items-center justify-center border ${
-                    isSelected ? 'border-2 border-emerald-700 bg-emerald-50' : 'border-gray-200 bg-gray-50'
+                  className={`w-11 h-11 rounded-xl items-center justify-center border ${
+                    isSelected
+                      ? 'border-2 border-[#0E0F0C] dark:border-[#F4F6F2] bg-[#E8EBE6] dark:bg-[#242921]'
+                      : 'border-[#D5D8CF] dark:border-[#2B3028] bg-[#F4F6F2] dark:bg-[#242921]'
                   }`}
                 >
-                  <DynamicIcon name={ic} size={22} color={isSelected ? '#047857' : '#4B5563'} />
+                  <DynamicIcon name={ic} size={20} color={isSelected ? '#0E0F0C' : '#5B5F5A'} />
                 </TouchableOpacity>
               );
             })}
@@ -169,22 +181,23 @@ export default function AddAccountScreen() {
         </View>
 
         {/* Color Picker */}
-        <View className="mb-6">
-          <Text className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+        <View className="mb-6 bg-white dark:bg-[#1B1E19] p-4 rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028]">
+          <Text className="text-xs font-black text-[#5B5F5A] dark:text-[#A3A8A0] uppercase tracking-widest mb-2">
             Choose Color
           </Text>
-          <View className="flex-row flex-wrap gap-3">
+          <View className="flex-row flex-wrap gap-2.5">
             {colors.map((c) => {
               const isSelected = selectedColor === c;
               return (
                 <TouchableOpacity
                   key={c}
+                  activeOpacity={0.7}
                   onPress={() => setSelectedColor(c)}
                   className="w-10 h-10 rounded-full items-center justify-center"
                   style={{
                     backgroundColor: c,
                     borderWidth: isSelected ? 3 : 0,
-                    borderColor: '#111827',
+                    borderColor: '#0E0F0C',
                   }}
                 >
                   {isSelected && <Check size={16} color="#FFFFFF" />}
@@ -198,10 +211,12 @@ export default function AddAccountScreen() {
         <TouchableOpacity
           activeOpacity={0.85}
           onPress={handleSave}
-          className="w-full py-4 bg-emerald-700 rounded-xl items-center justify-center flex-row shadow-sm mb-6"
+          className="w-full py-4 bg-[#9FE870] rounded-full items-center justify-center flex-row border border-[#86D454] mb-8"
         >
-          <Check size={18} color="#FFFFFF" className="mr-2" />
-          <Text className="text-white text-sm font-bold">Create Account</Text>
+          <Check size={18} color="#0E0F0C" strokeWidth={3} className="mr-2" />
+          <Text className="text-[#0E0F0C] text-xs font-black uppercase tracking-wider">
+            Create Account
+          </Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
