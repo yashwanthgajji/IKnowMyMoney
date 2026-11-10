@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
-  Switch,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -24,7 +23,6 @@ export default function AddAccountScreen() {
   const [name, setName] = useState('');
   const [type, setType] = useState<AccountType>('wallet');
   const [initialBalanceStr, setInitialBalanceStr] = useState('0');
-  const [isAsset, setIsAsset] = useState(true);
   const [selectedIcon, setSelectedIcon] = useState('Wallet');
   const [selectedColor, setSelectedColor] = useState('#054D28');
 
@@ -54,7 +52,7 @@ export default function AddAccountScreen() {
         icon: selectedIcon,
         color: selectedColor,
         initial_balance: initialBalance,
-        is_asset: isAsset ? 1 : 0,
+        is_asset: 1,
         sort_order: 0,
       });
 
@@ -109,14 +107,7 @@ export default function AddAccountScreen() {
                 <TouchableOpacity
                   key={t.type}
                   activeOpacity={0.7}
-                  onPress={() => {
-                    setType(t.type);
-                    if (t.type === 'card' || t.type === 'loan') {
-                      setIsAsset(false);
-                    } else {
-                      setIsAsset(true);
-                    }
-                  }}
+                  onPress={() => setType(t.type)}
                   className={`px-3 py-2 rounded-full border ${
                     isSelected
                       ? 'bg-[#9FE870] border-[#9FE870]'
@@ -136,22 +127,6 @@ export default function AddAccountScreen() {
               );
             })}
           </View>
-        </View>
-
-        {/* Is Asset Switch */}
-        <View className="flex-row items-center justify-between p-4 bg-white dark:bg-[#1B1E19] rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028] mb-4">
-          <View>
-            <Text className="text-sm font-black text-[#0E0F0C] dark:text-[#F4F6F2]">Include as Asset</Text>
-            <Text className="text-xs text-[#5B5F5A] dark:text-[#A3A8A0] font-medium">
-              {isAsset ? 'Adds to your Net Worth' : 'Counts as Debt/Liability'}
-            </Text>
-          </View>
-          <Switch
-            value={isAsset}
-            onValueChange={setIsAsset}
-            trackColor={{ false: '#D5D8CF', true: '#9FE870' }}
-            thumbColor="#0E0F0C"
-          />
         </View>
 
         {/* Icon Picker */}
@@ -214,9 +189,7 @@ export default function AddAccountScreen() {
           className="w-full py-4 bg-[#9FE870] rounded-full items-center justify-center flex-row border border-[#86D454] mb-8"
         >
           <Check size={18} color="#0E0F0C" strokeWidth={3} className="mr-2" />
-          <Text className="text-[#0E0F0C] text-xs font-black uppercase tracking-wider">
-            Create Account
-          </Text>
+          <Text className="text-[#0E0F0C] text-xs font-black uppercase tracking-wider">Create Account</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { ArrowDownRight, ArrowUpRight, ShieldCheck } from 'lucide-react-native';
+import { ArrowDownRight, ArrowUpRight } from 'lucide-react-native';
 import { formatCurrency } from '../../utils/money';
 
 interface HeroBalanceCardProps {
@@ -11,30 +11,12 @@ interface HeroBalanceCardProps {
 export function HeroBalanceCard({ balance, currencySymbol }: HeroBalanceCardProps) {
   return (
     <View className="bg-white dark:bg-[#1B1E19] rounded-2xl p-5 border border-[#D5D8CF] dark:border-[#2B3028]">
-      <View className="flex-row items-center justify-between mb-1.5">
-        <Text className="text-xs font-black uppercase tracking-widest text-[#5B5F5A] dark:text-[#A3A8A0]">
-          Total Available Balance
-        </Text>
-        <View className="flex-row items-center gap-1 bg-[#9FE870] px-2.5 py-1 rounded-full">
-          <ShieldCheck size={13} color="#0E0F0C" />
-          <Text className="text-[11px] font-black uppercase tracking-wider text-[#0E0F0C]">
-            Private
-          </Text>
-        </View>
-      </View>
-
-      <Text className="text-3xl font-black text-[#0E0F0C] dark:text-[#F4F6F2] tracking-tight mt-1">
+      <Text className="text-xs font-black uppercase tracking-widest text-[#5B5F5A] dark:text-[#A3A8A0] mb-1">
+        Total Available Balance
+      </Text>
+      <Text className="text-3xl font-black text-[#0E0F0C] dark:text-[#F4F6F2] tracking-tight">
         {formatCurrency(balance, currencySymbol)}
       </Text>
-
-      <View className="mt-3 pt-3 border-t border-[#E8EBE6] dark:border-[#2B3028] flex-row items-center justify-between">
-        <Text className="text-xs font-medium text-[#5B5F5A] dark:text-[#A3A8A0]">
-          Stored locally on this device
-        </Text>
-        <Text className="text-xs font-bold text-[#0E0F0C] dark:text-[#F4F6F2]">
-          100% Offline
-        </Text>
-      </View>
     </View>
   );
 }

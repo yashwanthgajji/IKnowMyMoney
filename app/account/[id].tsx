@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
-  Switch,
   ActivityIndicator,
   Modal,
   RefreshControl,
@@ -44,7 +43,6 @@ export default function AccountDetailScreen() {
   const [editName, setEditName] = useState('');
   const [editType, setEditType] = useState<AccountType>('wallet');
   const [editInitialBalanceStr, setEditInitialBalanceStr] = useState('0');
-  const [editIsAsset, setEditIsAsset] = useState(true);
   const [editSelectedIcon, setEditSelectedIcon] = useState('Wallet');
   const [editSelectedColor, setEditSelectedColor] = useState('#054D28');
 
@@ -76,7 +74,6 @@ export default function AccountDetailScreen() {
       setEditName(acc.name);
       setEditType(acc.type);
       setEditInitialBalanceStr((acc.initial_balance / 100).toFixed(2));
-      setEditIsAsset(acc.is_asset === 1);
       setEditSelectedIcon(acc.icon);
       setEditSelectedColor(acc.color);
 
@@ -118,7 +115,7 @@ export default function AccountDetailScreen() {
         icon: editSelectedIcon,
         color: editSelectedColor,
         initial_balance: initialBalance,
-        is_asset: editIsAsset ? 1 : 0,
+        is_asset: 1,
       });
 
       setEditModalVisible(false);
@@ -206,7 +203,7 @@ export default function AccountDetailScreen() {
                   {account.name}
                 </Text>
                 <Text className="text-xs text-[#5B5F5A] dark:text-[#A3A8A0] font-bold capitalize">
-                  {account.type} • {account.is_asset === 1 ? 'Asset' : 'Liability'}
+                  {account.type} Account
                 </Text>
               </View>
             </View>
@@ -359,21 +356,6 @@ export default function AccountDetailScreen() {
               </View>
             </View>
 
-            {/* Is Asset Switch */}
-            <View className="flex-row items-center justify-between p-4 bg-white dark:bg-[#1B1E19] rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028] mb-4">
-              <View>
-                <Text className="text-sm font-black text-[#0E0F0C] dark:text-[#F4F6F2]">Include as Asset</Text>
-                <Text className="text-xs text-[#5B5F5A] dark:text-[#A3A8A0] font-medium">
-                  {editIsAsset ? 'Adds to your Net Worth' : 'Counts as Debt/Liability'}
-                </Text>
-              </View>
-              <Switch
-                value={editIsAsset}
-                onValueChange={setEditIsAsset}
-                trackColor={{ false: '#D5D8CF', true: '#9FE870' }}
-                thumbColor="#0E0F0C"
-              />
-            </View>
 
             {/* Icon Picker */}
             <View className="mb-4 bg-white dark:bg-[#1B1E19] p-4 rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028]">

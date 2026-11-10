@@ -7,10 +7,11 @@ import {
   TextInput,
   Alert,
   ActivityIndicator,
+  Modal,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Trash2, Check } from 'lucide-react-native';
+import { Trash2, Check, Pencil } from 'lucide-react-native';
 import { TypeToggleTabs } from '../../src/components/ui/TypeToggleTabs';
 import { CategoryGrid } from '../../src/components/ui/CategoryGrid';
 import { NumericKeypad } from '../../src/components/ui/NumericKeypad';
@@ -40,7 +41,7 @@ export default function EditTransactionScreen() {
   const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
   const [note, setNote] = useState<string>('');
   const [date, setDate] = useState<number>(Date.now());
-  const [showKeypad, setShowKeypad] = useState<boolean>(false);
+  const [showAmountModal, setShowAmountModal] = useState<boolean>(false);
 
   useEffect(() => {
     async function loadData() {
@@ -210,26 +211,27 @@ export default function EditTransactionScreen() {
           <TypeToggleTabs selectedType={type} onSelectType={setType} />
         </View>
 
-        {/* Amount Display - Wise Flat Card */}
+        {/* Amount Display - Wise Flat Card (Tap to edit) */}
         <TouchableOpacity
-          activeOpacity={0.9}
-          onPress={() => setShowKeypad(!showKeypad)}
-          className="items-center justify-center py-5 px-6 bg-white dark:bg-[#1B1E19] mx-4 rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028]"
+          activeOpacity={0.85}
+          onPress={() => setShowAmountModal(true)}
+          className="py-5 px-6 bg-white dark:bg-[#1B1E19] mx-4 rounded-2xl border-2 border-[#D5D8CF] dark:border-[#2B3028]"
         >
-          <Text className="text-xs uppercase text-[#5B5F5A] dark:text-[#A3A8A0] font-black tracking-widest mb-1">
-            Amount (Tap to edit)
-          </Text>
-          <Text className={`text-4xl font-black tracking-tight ${amountColor}`}>
-            {currencySymbol} {amountStr}
-          </Text>
-        </TouchableOpacity>
-
-        {/* Keypad toggleable */}
-        {showKeypad && (
-          <View className="mt-3 pt-2">
-            <NumericKeypad onKeyPress={handleKeyPress} onDelete={handleDeleteKeyPress} />
+          <View className="flex-row items-center justify-between w-full mb-1">
+            <Text className="text-xs uppercase text-[#5B5F5A] dark:text-[#A3A8A0] font-black tracking-widest">
+              Amount
+            </Text>
+            <View className="flex-row items-center bg-[#F4F6F2] dark:bg-[#242921] px-2 py-0.5 rounded-full border border-[#D5D8CF] dark:border-[#2B3028]">
+              <Pencil size={11} color="#5B5F5A" />
+              <Text className="text-[10px] font-black text-[#5B5F5A] dark:text-[#A3A8A0] ml-1 uppercase">Tap to edit</Text>
+            </View>
           </View>
-        )}
+          <View className="items-center justify-center my-1">
+            <Text className={`text-4xl font-black tracking-tight ${amountColor}`}>
+              {currencySymbol} {amountStr}
+            </Text>
+          </View>
+        </TouchableOpacity>
 
         {/* Account Selector */}
         <View className="px-4 mt-3">
@@ -363,6 +365,57 @@ export default function EditTransactionScreen() {
           </TouchableOpacity>
         </View>
       </ScrollView>
+
+      {/* Amount Keypad Bottom-Sheet Modal */}
+      <Modal
+        visible={showAmountModal}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setShowAmountModal(false)}
+      >
+        <View className="flex-1 justify-end bg-black/50">
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => setShowAmountModal(false)}
+            className="flex-1"
+          />
+          <View className="bg-white dark:bg-[#1B1E19] rounded-t-3xl border-t border-[#D5D8CF] dark:border-[#2B3028] px-4 pt-4 pb-8">
+            {/* Modal Top Bar */}
+            <View className="flex-row items-center justify-between pb-3 border-b border-[#E8EBE6] dark:border-[#2B3028] mb-3">
+              <TouchableOpacity
+                onPress={() => setAmountStr('0')}
+                className="px-3 py-1.5 rounded-full bg-[#F4F6F2] dark:bg-[#242921]"
+              >
+                <Text className="text-xs font-black text-[#5B5F5A] dark:text-[#A3A8A0] uppercase">Clear</Text>
+              </TouchableOpacity>
+
+              <Text className="text-xs font-black text-[#5B5F5A] dark:text-[#A3A8A0] uppercase tracking-widest">
+                Edit Amount
+              </Text>
+
+              <TouchableOpacity
+                onPress={() => setShowAmountModal(false)}
+                className="px-4 py-1.5 rounded-full bg-[#9FE870] border border-[#86D454]"
+              >
+                <Text className="text-xs font-black text-[#0E0F0C] uppercase">Done</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Live Amount display directly above keypad */}
+            <View className="py-4 items-center justify-center bg-[#F4F6F2] dark:bg-[#242921] rounded-2xl mb-3 border border-[#D5D8CF] dark:border-[#2B3028]">
+              <Text className="text-xs font-black text-[#5B5F5A] dark:text-[#A3A8A0] uppercase tracking-wider mb-1">
+                Amount Preview
+              </Text>
+              <Text className={`text-4xl font-black tracking-tight ${amountColor}`}>
+                {currencySymbol} {amountStr}
+              </Text>
+            </View>
+
+            {/* Keypad */}
+            <NumericKeypad onKeyPress={handleKeyPress} onDelete={handleDeleteKeyPress} />
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }

@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { colorScheme } from 'nativewind';
 
 interface SettingsState {
   currencySymbol: string;
@@ -37,9 +36,6 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
       if (data) {
         const parsed = JSON.parse(data);
         set({ ...parsed, isLoaded: true });
-        if (parsed.theme) {
-          colorScheme.set(parsed.theme);
-        }
       } else {
         set({ isLoaded: true });
       }
@@ -68,7 +64,6 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
   },
 
   setTheme: async (theme: 'light' | 'dark' | 'system') => {
-    colorScheme.set(theme);
     set({ theme });
     const current = get();
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(current));

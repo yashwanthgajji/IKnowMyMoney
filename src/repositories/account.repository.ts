@@ -106,23 +106,23 @@ export const AccountRepository = {
     await db.runAsync('DELETE FROM accounts WHERE id = ?;', [id]);
   },
 
+  async getTotalBalance(): Promise<number> {
+    const accounts = await this.getAllWithBalances();
+    return accounts.reduce((sum, acc) => sum + acc.current_balance, 0);
+  },
+
   async getNetWorth(): Promise<{ assets: number; liabilities: number; netWorth: number }> {
     const accounts = await this.getAllWithBalances();
-    let assets = 0;
-    let liabilities = 0;
+    let total = 0;
 
     for (const acc of accounts) {
-      if (acc.is_asset === 1) {
-        assets += acc.current_balance;
-      } else {
-        liabilities += acc.current_balance;
-      }
+      total += acc.current_balance;
     }
 
     return {
-      assets,
-      liabilities,
-      netWorth: assets - liabilities,
+      assets: total,
+      liabilities: 0,
+      netWorth: total,
     };
   },
 };

@@ -12,7 +12,7 @@ import {
 import { seedInitialData } from './seed';
 
 export const DB_NAME = 'iknowmymoney.db';
-export const DB_VERSION = 2;
+export const DB_VERSION = 3;
 
 let dbInstance: SQLite.SQLiteDatabase | null = null;
 
@@ -24,6 +24,11 @@ async function migrateDatabase(db: SQLite.SQLiteDatabase): Promise<void> {
     await db.execAsync(CREATE_TAGS_TABLE);
     await db.execAsync(CREATE_TRANSACTION_TAGS_TABLE);
     await db.execAsync('PRAGMA user_version = 2;');
+  }
+
+  if (currentVersion < 3) {
+    await db.execAsync('UPDATE accounts SET is_asset = 1 WHERE is_asset = 0;');
+    await db.execAsync('PRAGMA user_version = 3;');
   }
 }
 

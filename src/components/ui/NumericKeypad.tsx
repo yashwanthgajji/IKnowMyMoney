@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Delete } from 'lucide-react-native';
+import { useColorScheme } from 'nativewind';
 
 interface NumericKeypadProps {
   onKeyPress: (key: string) => void;
@@ -8,6 +9,9 @@ interface NumericKeypadProps {
 }
 
 export function NumericKeypad({ onKeyPress, onDelete }: NumericKeypadProps) {
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === 'dark';
+
   const rows = [
     ['1', '2', '3'],
     ['4', '5', '6'],
@@ -28,7 +32,7 @@ export function NumericKeypad({ onKeyPress, onDelete }: NumericKeypadProps) {
                   onPress={onDelete}
                   className="flex-1 h-14 bg-[#F4F6F2] dark:bg-[#242921] rounded-2xl items-center justify-center border border-[#D5D8CF] dark:border-[#2B3028] active:opacity-70"
                 >
-                  <Delete size={22} color="#0E0F0C" />
+                  <Delete size={22} color={isDark ? '#F4F6F2' : '#0E0F0C'} />
                 </TouchableOpacity>
               );
             }

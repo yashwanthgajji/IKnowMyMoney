@@ -11,7 +11,8 @@ import { useSettingsStore } from '../src/stores/settings.store';
 export default function RootLayout() {
   const [isReady, setIsReady] = useState(false);
   const loadSettings = useSettingsStore((s) => s.loadSettings);
-  const { colorScheme } = useColorScheme();
+  const theme = useSettingsStore((s) => s.theme);
+  const { colorScheme, setColorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
 
   useEffect(() => {
@@ -27,6 +28,16 @@ export default function RootLayout() {
     }
     init();
   }, []);
+
+  useEffect(() => {
+    if (theme) {
+      try {
+        setColorScheme(theme);
+      } catch (e) {
+        console.error('Failed to apply theme in root layout', e);
+      }
+    }
+  }, [theme]);
 
   if (!isReady) {
     return (

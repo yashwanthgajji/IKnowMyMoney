@@ -14,6 +14,29 @@ import { CategoryRepository } from '../../src/repositories/category.repository';
 import { CategoryType } from '../../src/types';
 import { DynamicIcon } from '../../src/components/ui/DynamicIcon';
 
+const EXPENSE_ICONS = [
+  'Utensils', 'Coffee', 'ShoppingCart', 'ShoppingBag',
+  'Car', 'Fuel', 'BusFront', 'Plane', 'Hotel',
+  'Tv', 'Film', 'Clapperboard', 'Gamepad2', 'Headphones',
+  'Mountain', 'Dumbbell', 'Trophy', 'Medal', 'Bike',
+  'House', 'Wrench', 'Sprout', 'Shirt', 'Sparkles', 'Dog',
+  'Receipt', 'Zap', 'Droplets', 'Wifi', 'Smartphone',
+  'HeartPulse', 'Pill', 'GraduationCap',
+  'Users', 'Handshake', 'CircleEllipsis', 'Tag'
+];
+
+const INCOME_ICONS = [
+  'Briefcase', 'Landmark', 'Building', 'Store',
+  'Laptop', 'TrendingUp', 'ChartLine', 'Percent', 'Key',
+  'BadgeDollarSign', 'Award', 'HandCoins', 'RotateCcw',
+  'Ticket', 'Gift', 'Coins', 'Users', 'Handshake'
+];
+
+const COLORS = [
+  '#054D28', '#1D4ED8', '#A7000D', '#B86700',
+  '#7C3AED', '#DB2777', '#0891B2', '#0E0F0C'
+];
+
 export default function AddCategoryScreen() {
   const params = useLocalSearchParams<{ type?: string }>();
   const router = useRouter();
@@ -22,19 +45,29 @@ export default function AddCategoryScreen() {
     params.type === 'income' ? 'income' : 'expense'
   );
   const [name, setName] = useState('');
-  const [selectedIcon, setSelectedIcon] = useState('Tag');
-  const [selectedColor, setSelectedColor] = useState('#054D28');
+  const [selectedIcon, setSelectedIcon] = useState(
+    params.type === 'income' ? 'Briefcase' : 'Utensils'
+  );
+  const [selectedColor, setSelectedColor] = useState(
+    params.type === 'income' ? '#054D28' : '#A7000D'
+  );
 
-  const icons = [
-    'Tag', 'Utensils', 'Car', 'ShoppingBag', 'Receipt', 'Film',
-    'HeartPulse', 'GraduationCap', 'Sparkles', 'Home', 'Briefcase',
-    'Laptop', 'TrendingUp', 'Gift', 'Plane', 'Coffee', 'Smartphone', 'Gamepad2'
-  ];
+  const activeIcons = type === 'income' ? INCOME_ICONS : EXPENSE_ICONS;
 
-  const colors = [
-    '#054D28', '#1D4ED8', '#A7000D', '#B86700',
-    '#7C3AED', '#DB2777', '#0891B2', '#0E0F0C'
-  ];
+  const handleTypeChange = (newType: CategoryType) => {
+    setType(newType);
+    if (newType === 'income') {
+      if (!INCOME_ICONS.includes(selectedIcon)) {
+        setSelectedIcon('Briefcase');
+      }
+      setSelectedColor('#054D28');
+    } else {
+      if (!EXPENSE_ICONS.includes(selectedIcon)) {
+        setSelectedIcon('Utensils');
+      }
+      setSelectedColor('#A7000D');
+    }
+  };
 
   const handleSave = async () => {
     if (!name.trim()) {
@@ -66,7 +99,7 @@ export default function AddCategoryScreen() {
         <View className="mb-4 bg-white dark:bg-[#1B1E19] p-1.5 rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028] flex-row gap-1.5">
           <TouchableOpacity
             activeOpacity={0.8}
-            onPress={() => setType('expense')}
+            onPress={() => handleTypeChange('expense')}
             className={`flex-1 py-2.5 rounded-xl items-center ${
               type === 'expense' ? 'bg-[#A7000D]' : 'bg-transparent'
             }`}
@@ -84,7 +117,7 @@ export default function AddCategoryScreen() {
 
           <TouchableOpacity
             activeOpacity={0.8}
-            onPress={() => setType('income')}
+            onPress={() => handleTypeChange('income')}
             className={`flex-1 py-2.5 rounded-xl items-center ${
               type === 'income' ? 'bg-[#054D28]' : 'bg-transparent'
             }`}
@@ -109,7 +142,7 @@ export default function AddCategoryScreen() {
           <TextInput
             value={name}
             onChangeText={setName}
-            placeholder="e.g. Subscriptions, Coffee, Pet Care"
+            placeholder={type === 'income' ? 'e.g. Salary, Rental, Dividends, Bonus' : 'e.g. Groceries, Netflix, Hiking, Gym'}
             placeholderTextColor="#868685"
             className="bg-[#F4F6F2] dark:bg-[#242921] rounded-xl px-4 py-3 border border-[#D5D8CF] dark:border-[#2B3028] text-xs font-bold text-[#0E0F0C] dark:text-[#F4F6F2]"
           />
@@ -117,11 +150,23 @@ export default function AddCategoryScreen() {
 
         {/* Icon Picker */}
         <View className="mb-4 bg-white dark:bg-[#1B1E19] p-4 rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028]">
-          <Text className="text-xs font-black text-[#5B5F5A] dark:text-[#A3A8A0] uppercase tracking-widest mb-2">
-            Choose Icon
-          </Text>
+          <View className="flex-row items-center justify-between mb-2">
+            <Text className="text-xs font-black text-[#5B5F5A] dark:text-[#A3A8A0] uppercase tracking-widest">
+              Choose Icon ({activeIcons.length})
+            </Text>
+            <View className="flex-row items-center">
+              <Text className="text-[11px] font-bold text-[#5B5F5A] dark:text-[#A3A8A0] mr-2">Selected:</Text>
+              <View
+                className="w-7 h-7 rounded-lg items-center justify-center"
+                style={{ backgroundColor: `${selectedColor}20` }}
+              >
+                <DynamicIcon name={selectedIcon} size={16} color={selectedColor} />
+              </View>
+            </View>
+          </View>
+
           <View className="flex-row flex-wrap gap-2.5">
-            {icons.map((ic) => {
+            {activeIcons.map((ic) => {
               const isSelected = selectedIcon === ic;
               return (
                 <TouchableOpacity
@@ -134,7 +179,7 @@ export default function AddCategoryScreen() {
                       : 'border-[#D5D8CF] dark:border-[#2B3028] bg-[#F4F6F2] dark:bg-[#242921]'
                   }`}
                 >
-                  <DynamicIcon name={ic} size={20} color={isSelected ? '#0E0F0C' : '#5B5F5A'} />
+                  <DynamicIcon name={ic} size={20} color={isSelected ? selectedColor : '#5B5F5A'} />
                 </TouchableOpacity>
               );
             })}
@@ -147,7 +192,7 @@ export default function AddCategoryScreen() {
             Choose Color
           </Text>
           <View className="flex-row flex-wrap gap-2.5">
-            {colors.map((c) => {
+            {COLORS.map((c) => {
               const isSelected = selectedColor === c;
               return (
                 <TouchableOpacity

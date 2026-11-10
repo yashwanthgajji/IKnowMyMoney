@@ -20,19 +20,12 @@ export default function AccountsScreen() {
   const currencySymbol = useSettingsStore((s) => s.currencySymbol);
 
   const [accounts, setAccounts] = useState<AccountWithBalance[]>([]);
-  const [netWorth, setNetWorth] = useState<{ assets: number; liabilities: number; netWorth: number }>({
-    assets: 0,
-    liabilities: 0,
-    netWorth: 0,
-  });
   const [refreshing, setRefreshing] = useState(false);
 
   const loadData = useCallback(async () => {
     try {
       const all = await AccountRepository.getAllWithBalances();
       setAccounts(all);
-      const nw = await AccountRepository.getNetWorth();
-      setNetWorth(nw);
     } catch (e) {
       console.error('Failed to load accounts', e);
     }
@@ -50,8 +43,7 @@ export default function AccountsScreen() {
     setRefreshing(false);
   };
 
-  const assets = accounts.filter((a) => a.is_asset === 1);
-  const liabilities = accounts.filter((a) => a.is_asset === 0);
+  const totalBalance = accounts.reduce((sum, acc) => sum + acc.current_balance, 0);
 
   return (
     <SafeAreaView edges={['left', 'right']} className="flex-1 bg-[#E8EBE6] dark:bg-[#121411]">
@@ -66,90 +58,33 @@ export default function AccountsScreen() {
           />
         }
       >
-        {/* Net Worth Summary Card - Wise Flat Card */}
+        {/* Total Balance Summary Card - Wise Flat Card */}
         <View className="m-4 bg-white dark:bg-[#1B1E19] rounded-2xl p-5 border border-[#D5D8CF] dark:border-[#2B3028]">
           <Text className="text-xs font-black text-[#5B5F5A] dark:text-[#A3A8A0] uppercase tracking-widest mb-1">
-            Total Net Worth
+            Total Balance
           </Text>
           <Text className="text-3xl font-black text-[#0E0F0C] dark:text-[#F4F6F2] tracking-tight">
-            {formatCurrency(netWorth.netWorth, currencySymbol)}
+            {formatCurrency(totalBalance, currencySymbol)}
           </Text>
-
-          <View className="flex-row justify-between mt-4 pt-3 border-t border-[#E8EBE6] dark:border-[#2B3028]">
-            <View>
-              <Text className="text-xs font-black text-[#5B5F5A] dark:text-[#A3A8A0] uppercase tracking-wider">
-                Assets
-              </Text>
-              <Text className="text-sm font-black text-[#054D28] dark:text-[#4ADE80] mt-0.5">
-                {formatCurrency(netWorth.assets, currencySymbol)}
-              </Text>
-            </View>
-            <View className="items-end">
-              <Text className="text-xs font-black text-[#5B5F5A] dark:text-[#A3A8A0] uppercase tracking-wider">
-                Liabilities
-              </Text>
-              <Text className="text-sm font-black text-[#A7000D] dark:text-[#F87171] mt-0.5">
-                {formatCurrency(netWorth.liabilities, currencySymbol)}
-              </Text>
-            </View>
-          </View>
         </View>
 
-        {/* Section: Assets */}
+        {/* Section: Accounts */}
         <View className="px-4 mt-1">
           <View className="flex-row items-center justify-between mb-2">
             <Text className="text-xs font-black uppercase tracking-widest text-[#0E0F0C] dark:text-[#F4F6F2]">
-              Assets ({assets.length})
-            </Text>
-            <Text className="text-xs font-black text-[#054D28] dark:text-[#4ADE80]">
-              {formatCurrency(netWorth.assets, currencySymbol)}
+              Accounts ({accounts.length})
             </Text>
           </View>
-          <View className="bg-white dark:bg-[#1B1E19] rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028] overflow-hidden">
-            {assets.map((acc) => (
-              <TouchableOpacity
-                key={acc.id}
-                activeOpacity={0.7}
-                onPress={() => router.push(`/account/${acc.id}`)}
-                className="flex-row items-center justify-between p-4 border-b border-[#E8EBE6] dark:border-[#2B3028]"
-              >
-                <View className="flex-row items-center flex-1 mr-3">
-                  <View
-                    className="w-10 h-10 rounded-xl items-center justify-center mr-3"
-                    style={{ backgroundColor: `${acc.color}15` }}
-                  >
-                    <DynamicIcon name={acc.icon} size={20} color={acc.color} />
-                  </View>
-                  <View>
-                    <Text className="text-sm font-bold text-[#0E0F0C] dark:text-[#F4F6F2]">
-                      {acc.name}
-                    </Text>
-                    <Text className="text-xs text-[#5B5F5A] dark:text-[#A3A8A0] capitalize">
-                      {acc.type}
-                    </Text>
-                  </View>
-                </View>
-                <Text className="text-sm font-black text-[#054D28] dark:text-[#4ADE80]">
-                  {formatCurrency(acc.current_balance, currencySymbol)}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
 
-        {/* Section: Liabilities */}
-        {liabilities.length > 0 && (
-          <View className="px-4 mt-5">
-            <View className="flex-row items-center justify-between mb-2">
-              <Text className="text-xs font-black uppercase tracking-widest text-[#0E0F0C] dark:text-[#F4F6F2]">
-                Liabilities ({liabilities.length})
-              </Text>
-              <Text className="text-xs font-black text-[#A7000D] dark:text-[#F87171]">
-                {formatCurrency(netWorth.liabilities, currencySymbol)}
+          {accounts.length === 0 ? (
+            <View className="bg-white dark:bg-[#1B1E19] rounded-2xl p-6 items-center border border-[#D5D8CF] dark:border-[#2B3028]">
+              <Text className="text-sm font-bold text-[#5B5F5A] dark:text-[#A3A8A0]">
+                No accounts yet. Tap + to add one.
               </Text>
             </View>
+          ) : (
             <View className="bg-white dark:bg-[#1B1E19] rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028] overflow-hidden">
-              {liabilities.map((acc) => (
+              {accounts.map((acc) => (
                 <TouchableOpacity
                   key={acc.id}
                   activeOpacity={0.7}
@@ -172,14 +107,18 @@ export default function AccountsScreen() {
                       </Text>
                     </View>
                   </View>
-                  <Text className="text-sm font-black text-[#A7000D] dark:text-[#F87171]">
+                  <Text className={`text-sm font-black ${
+                    acc.current_balance >= 0
+                      ? 'text-[#054D28] dark:text-[#4ADE80]'
+                      : 'text-[#A7000D] dark:text-[#F87171]'
+                  }`}>
                     {formatCurrency(acc.current_balance, currencySymbol)}
                   </Text>
                 </TouchableOpacity>
               ))}
             </View>
-          </View>
-        )}
+          )}
+        </View>
       </ScrollView>
 
       {/* FAB Add Account - Wise Vivid Lime */}

@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { useColorScheme } from 'nativewind';
 import {
   DollarSign,
   Sun,
@@ -27,12 +28,22 @@ import { TransactionRepository } from '../src/repositories/transaction.repositor
 
 export default function SettingsScreen() {
   const router = useRouter();
+  const { setColorScheme } = useColorScheme();
   const {
     theme,
     setTheme,
     currencySymbol,
     setCurrencySymbol,
   } = useSettingsStore();
+
+  const handleThemeChange = async (key: 'system' | 'light' | 'dark') => {
+    try {
+      setColorScheme(key);
+      await setTheme(key);
+    } catch (e) {
+      console.error('Failed to update theme', e);
+    }
+  };
 
   const currencies = ['$', '€', '£', '₹', '¥', 'C$', 'A$'];
 
@@ -109,10 +120,10 @@ export default function SettingsScreen() {
                 <TouchableOpacity
                   key={opt.key}
                   activeOpacity={0.8}
-                  onPress={() => setTheme(opt.key)}
+                  onPress={() => handleThemeChange(opt.key)}
                   className={`flex-1 flex-row items-center justify-center py-2.5 rounded-lg gap-1.5 ${
                     isSelected
-                      ? 'bg-[#9FE870] shadow-sm'
+                      ? 'bg-[#9FE870]'
                       : 'bg-transparent'
                   }`}
                 >
@@ -177,7 +188,7 @@ export default function SettingsScreen() {
         <View className="mb-4 bg-white dark:bg-[#1B1E19] rounded-2xl border border-[#D5D8CF] dark:border-[#2B3028] overflow-hidden">
           <TouchableOpacity
             activeOpacity={0.7}
-            onPress={() => router.push('/category/index' as any)}
+            onPress={() => router.push('/category' as any)}
             className="flex-row items-center justify-between p-4"
           >
             <View className="flex-row items-center">
